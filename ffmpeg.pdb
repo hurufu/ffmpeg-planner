@@ -1,4 +1,5 @@
 :- set_prolog_flag(double_quotes, chars).
+:- initialization(sexpr_sanity_checks_are_passing).
 
 %% Grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,6 +34,38 @@ valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
 
 %% S-Expr grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+sexpr(S) --> filler(_), sexpr_proper(S), filler(_).
+sexpr_proper([]) --> "".
+sexpr_proper([H|T]) --> word(H), spaced_sexpr(T).
+sexpr_proper([S]) --> "(", filler(_), sexpr(S), filler(_), ")".
+spaced_sexpr([]) --> "".
+spaced_sexpr([H|T]) --> space, sexpr([H|T]).
+space --> filler([_|_]).
+filler([]) --> "".
+filler([_|T]) --> " ", filler(T).
+word(A) --> word_aux([H|T]), { atom_chars(A, [H|T]) }.
+word(N) --> number_aux([H|T]), { number_chars(N, [H|T]) }.
+number_aux([]) --> "".
+number_aux([H|T]) --> digit(H), number_aux(T).
+word_aux([]) --> "".
+word_aux([H|T]) --> character(H), word_aux(T).
+character(C) --> letter(C) | special(C).
+letter(L) --> { member(L, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") }, [L].
+digit(D) --> { member(D, "0123456789") }, [D].
+special(S) --> { member(S, "-_*+") }, [S].
+
+sexpr_list(S, L) :- phrase(sexpr(L), S).
+
+sexpr_tests_are_passing :-
+    sexpr_sanity_checks_are_passing.
+
+sexpr_sanity_checks_are_passing :-
+    sexpr_list("", []),
+    sexpr_list("()", [[]]),
+    sexpr_list("hello ", [hello]),
+    sexpr_list("(hello)", [[hello]]),
+    sexpr_list("* 2 (+ 3 4)", [*, 2, [+, 3, 4]]),
+    sexpr_list("(* 2 (+ 3 4))", [[*, 2, [+, 3, 4]]]).
 
 %% DCG Utils %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
