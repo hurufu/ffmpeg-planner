@@ -11,90 +11,59 @@
 %    string_codes("(* 2 (+ 3 4))", C),
 %    codes_sexpr(C, S).
 
-ffmpeg_commandline(inputs([ValidInput]), args(LogLevel, Files)) --> "ffmpeg", global(LogLevel), inputs(I), outputs(O),
+%% Grammar %%%%%%%%%%%%%%%
+
+ffmpeg_plan(Plan) --> "ffmpeg", steps(Plan).
+steps([]) --> "".
+steps([H|T]) --> step(H), steps(T).
+step(input_file(FileNameAtom)) -->
     {
-        all_different(I, O),
-        concatenation([I,O], Files),
-        valid_input_list([ValidInput], I)
-    }.
-
-inputs([file(input, F, [])]) --> input_options, ws, "-i", ws, filename(F).
-input_options --> "". % TODO: Specify input options eg. for RAW format.
-
-outputs([file(output, F, [Codec, mapping(Maps)])]) --> maps(Maps), output_options(Codec), ((ws, "-o") | ""), ws, filename(F).
-output_options(codec(C)) --> "" | codec(C).
-codec(default) --> "". % TODO: Consider specifying actual "default" codec that was used
-codec(Codec) --> ws, ("-c" | "-codec"), codec_stream_specifier(StreamSpecifier), ws, specific_codec(StreamSpecifier, Codec).
-codec_stream_specifier(all) --> "" | ":".
-codec_stream_specifier(audio(all)) --> ":a".
-codec_stream_specifier(video(all)) --> ":v".
-codec_stream_specifier(audio(N)) --> ":a:", stream_specifier(N).
-codec_stream_specifier(video(N)) --> ":v:", stream_specifier(N).
-codec_stream_specifier(subtitles(N)) --> ":s:", stream_specifier(N).
-
-stream_specifier(N) --> [A],
+        atom_chars(FileNameAtom, FileNameChars)
+    },
+    ws, "-i", ws, FileNameChars.
+step(set_mapping(automatic)) --> "".
+step(use_codec(Type, Codec)) -->
     {
-        valid_stream_specifier(N, A)
-    }.
-
-specific_codec(_, copy) --> "copy".
-specific_codec(audio(_), aac) --> "aac".
-specific_codec(audio(_), ac3) --> "ac3".
-specific_codec(video(_), libx264) --> "libx264".
-specific_codec(video(_), libx265) --> "libx265".
-specific_codec(subtitles(_), srt) --> "srt".
-
-maps(automatic) --> "".
-%maps --> ws, "-map", ws, "0", ":", "0".
-
-global(loglevel(default)) --> "". % I think default loglevel is 'warning'
-global(loglevel(L)) --> loglevel(L).
-loglevel(L) --> ws, ("-v" | "-loglevel"), ws, loglevel(_, L).
-loglevel(0, quiet) --> "quiet".
-loglevel(1, panic) --> "panic".
-loglevel(2, fatal) --> "fatal".
-loglevel(3, error) --> "error".
-loglevel(4, warning) --> "warning".
-loglevel(5, info) --> "info".
-loglevel(6, verbose) --> "verbose".
-loglevel(7, debug) --> "debug".
-loglevel(8, trace) --> "trace".
-
-filename(A) --> { valid_filename(S, A) }, S.
+        valid_codec(Type, TypeChars, Codec, CodecChars)
+    },
+    ws, "-c:", TypeChars, ws, CodecChars.
+step(output_file(FileNameAtom)) -->
+    {
+        atom_chars(FileNameAtom, FileNameChars)
+    },
+    ws, "-o", ws, FileNameChars.
 
 ws --> " ".
 
-valid_filename(S, A) :-
-    member(S, ["hello.mp4", "world.mkv"]),
-    atom_string(A, S).
+valid_codec(TypeAtom, TypeChars, CodecAtom, CodecChars) :-
+    valid_codec_aux(TypeAtom, CodecAtom),
+    atom_chars(TypeAtom, TypeChars),
+    atom_chars(CodecAtom, CodecChars).
+valid_codec_aux(audio, C) :- member(C, [aac, opus]).
+valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
 
-valid_stream_specifier(N, A) :-
-    member(N, [0,1,2,3]),
-    number_atom(N, A).
+%% Main %%%%%%%%%%%%%%%%%
 
-valid_input_list(A, B) :-
-    valid_input_list_aux(A, B, 0).
-valid_input_list_aux([], [], _).
-valid_input_list_aux([Ih|It], [Ah|At], N) :-
-    New is N + 1,
-    valid_input(Ih, Ah, N),
-    valid_input_list_aux(It, At, New).
-valid_input(Input, Args, N) :-
-    Args = file(input, FileName, _),
-    Input = f(name(FileName), id(N), container(format(F), streams([]))),
-    atom_chars(FileName, FileNameChars),
-    concatenation([_, ".", FChars], FileNameChars),
-    atom_chars(F, FChars).
+main :-
+    main(A),
+    format("~s~n", [A]).
 
-number_atom(N, A) :-
-    number_string(N, S),
-    atom_string(A, S).
+main(A) :-
+    plan(P),
+    phrase(ffmpeg_plan(P), A).
 
-% TODO: All outputs should differ from each other
-all_different([], _).
-all_different([file(_, Ah, _)|At], B) :-
-    \+member(file(_, Ah, _), B),
-    all_different(At, B).
+plan([
+    input_file('world.mkv'),
+    set_mapping(automatic),
+    use_codec(video, libx265),
+    use_codec(audio, opus),
+    output_file('hello.mp4')
+]).
+
+sexpr_list_term(Lists, Terms) :-
+    maplist(=.., Terms, Lists).
+
+%% Utils %%%%%%%%%%%%%%%%%%
 
 any_sequence([]) --> [].
 any_sequence([H|T]) --> [H], any_sequence(T).
@@ -104,104 +73,3 @@ any_sequence_of_any_sequences([H|T]) --> any_sequence(H), any_sequence_of_any_se
 
 concatenation(ListOfLists, Concatenation) :-
     phrase(any_sequence_of_any_sequences(ListOfLists), Concatenation).
-
-%%%%%%%%%%%%%%%%%%%
-
-main :-
-    main(3).
-
-main(N) :-
-    main(N, String),
-    format("~s", [String]).
-
-main(N, String) :-
-    main_aux(N, Results),
-    phrase(result_full(Results), String).
-
-main_aux(1, [I,P,A]) :-
-    ffmpeg_arguments(I, A, P).
-
-main_aux(2, [I,P,A]) :-
-    findall(I-A-P, ffmpeg_arguments(I, A, P), L),
-    shortest(E, L),
-    E = I-A-P.
-
-main_aux(3, [I,P,A]) :-
-    findall(I-A-P, ffmpeg_arguments(I, A, P), L),
-    longest(E, L),
-    E = I-A-P.
-
-main_aux(4, [I,P,A]) :-
-    example(I, P),
-    ffmpeg_arguments(I, A, P).
-
-ffmpeg_arguments(Inputs, Args, Parsed) :-
-    phrase(ffmpeg_commandline(Inputs, Parsed), Args).
-
-shortest(E, [E]).
-shortest(ENew, [A,B|T]) :-
-    shortest(E, [B|T]),
-    shortest_aux(A, E, ENew).
-
-shortest_aux(I1-L1-P1, I2-L2-P2, Shortest) :-
-    length(L1, ALength),
-    length(L2, ELength),
-    ALength < ELength ->
-        I1-L1-P1 = Shortest;
-        I2-L2-P2 = Shortest.
-
-longest(E, [E]).
-longest(ENew, [A,B|T]) :-
-    longest(E, [B|T]),
-    longest_aux(A, E, ENew).
-
-longest_aux(I1-L1-P1, I2-L2-P2, Shortest) :-
-    length(L1, ALength),
-    length(L2, ELength),
-    ALength > ELength ->
-        I1-L1-P1 = Shortest;
-        I2-L2-P2 = Shortest.
-
-result_full([I,P,A]) --> result_inputs(I), result_predicate(P), result_arguments(A), result_nl.
-result_nl --> "\n".
-result_inputs(I) --> result_portray_term(I), result_nl.
-result_predicate(P) --> result_portray_term(P), result_nl.
-result_arguments(A) --> "\t", any_sequence(A), result_nl.
-result_portray_term(Term) -->
-    {
-        term_string(Term, String),
-        string_chars(String, AtomList)
-    },
-    AtomList.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-example(
-    inputs([
-        f(
-            name('world.mkv'),
-            id(0),
-            container(
-                format(mkv),
-                streams([
-                    stream(0, video,
-                        codec(libx264)
-                    ),
-                    stream(1, audio,
-                        codec(aac)
-                    )
-                ])
-            )
-        )
-    ]),
-    args(
-        loglevel(verbose),
-        [
-            file(input, 'world.mkv', []),
-            file(output, 'hello.mp4', [
-                codec(libx265),
-                mapping(automatic)
-            ])
-        ]
-    )
-).
