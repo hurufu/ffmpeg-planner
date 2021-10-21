@@ -54,7 +54,12 @@ letter(L) --> { member(L, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 digit(D) --> { member(D, "0123456789") }, [D].
 special(S) --> { member(S, "-_*+.") }, [S].
 
-sexpr_list(S, L) :- phrase(sexpr(L), S).
+sexpr_list(S, L) :-
+    phrase(sexpr(L), S).
+
+sexpr_terms(Sexpr, Terms) :-
+    sexpr_list(Sexpr, List),
+    maplist(=.., Terms, List).
 
 sexpr_tests_are_passing :-
     sexpr_sanity_checks_are_passing.
@@ -93,7 +98,3 @@ main(A) :-
     phrase(ffmpeg_plan(T), A).
 
 plan("(input_file world.mkv)(set_mapping automatic)(use_codec video libx265)(use_codec audio opus)(output_file hello.mp4)").
-
-sexpr_terms(Sexpr, Terms) :-
-    sexpr_list(Sexpr, List),
-    maplist(=.., Terms, List).
