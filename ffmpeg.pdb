@@ -94,9 +94,6 @@ main(A) :-
 
 plan("(input_file world.mkv)(set_mapping automatic)(use_codec video libx265)(use_codec audio opus)(output_file hello.mp4)").
 
-sexpr_list_term(Lists, Terms) :-
-    maplist(=.., Terms, Lists).
-
 sexpr_terms(Sexpr, Terms) :-
     sexpr_list(Sexpr, List),
-    sexpr_list_term(List, Terms).
+    maplist(=.., Terms, List).
