@@ -37,7 +37,7 @@ valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
 sexpr(S) --> filler(_), sexpr_proper(S), filler(_).
 sexpr_proper([]) --> "".
 sexpr_proper([H|T]) --> word(H), spaced_sexpr(T).
-sexpr_proper([S]) --> "(", filler(_), sexpr(S), filler(_), ")".
+sexpr_proper([H|T]) --> "(", filler(_), sexpr(H), filler(_), ")", sexpr_proper(T).
 spaced_sexpr([]) --> "".
 spaced_sexpr([H|T]) --> space, sexpr([H|T]).
 space --> filler([_|_]).
@@ -49,10 +49,10 @@ number_aux([]) --> "".
 number_aux([H|T]) --> digit(H), number_aux(T).
 word_aux([]) --> "".
 word_aux([H|T]) --> character(H), word_aux(T).
-character(C) --> letter(C) | special(C).
+character(C) --> letter(C) | special(C) | digit(C).
 letter(L) --> { member(L, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") }, [L].
 digit(D) --> { member(D, "0123456789") }, [D].
-special(S) --> { member(S, "-_*+") }, [S].
+special(S) --> { member(S, "-_*+.") }, [S].
 
 sexpr_list(S, L) :- phrase(sexpr(L), S).
 
@@ -64,6 +64,9 @@ sexpr_sanity_checks_are_passing :-
     sexpr_list("()", [[]]),
     sexpr_list("hello ", [hello]),
     sexpr_list("(hello)", [[hello]]),
+    sexpr_list("()()", [[],[]]),
+    sexpr_list("(a b)(c d)", [[a,b],[c,d]]),
+    sexpr_list("a1", [a1]),
     sexpr_list("* 2 (+ 3 4)", [*, 2, [+, 3, 4]]),
     sexpr_list("(* 2 (+ 3 4))", [[*, 2, [+, 3, 4]]]).
 
@@ -85,16 +88,15 @@ main :-
     format("~s~n", [A]).
 
 main(A) :-
-    plan(P),
-    phrase(ffmpeg_plan(P), A).
+    plan(S),
+    sexpr_terms(S, T),
+    phrase(ffmpeg_plan(T), A).
 
-plan([
-    input_file('world.mkv'),
-    set_mapping(automatic),
-    use_codec(video, libx265),
-    use_codec(audio, opus),
-    output_file('hello.mp4')
-]).
+plan("(input_file world.mkv)(set_mapping automatic)(use_codec video libx265)(use_codec audio opus)(output_file hello.mp4)").
 
 sexpr_list_term(Lists, Terms) :-
     maplist(=.., Terms, Lists).
+
+sexpr_terms(Sexpr, Terms) :-
+    sexpr_list(Sexpr, List),
+    sexpr_list_term(List, Terms).
