@@ -42,7 +42,7 @@ spaced_sexpr([]) --> "".
 spaced_sexpr([H|T]) --> space, sexpr([H|T]).
 space --> filler([_|_]).
 filler([]) --> "".
-filler([_|T]) --> " ", filler(T).
+filler([_|T]) --> (" "|"\n"|"\t"), filler(T).
 word(A) --> word_aux([H|T]), { atom_chars(A, [H|T]) }.
 word(N) --> number_aux([H|T]), { number_chars(N, [H|T]) }.
 number_aux([]) --> "".
