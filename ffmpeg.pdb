@@ -25,9 +25,9 @@ step(output_file(FileNameAtom)) -->
 
 ws --> " ".
 
-valid_codec(TypeAtom, TypeChars, CodecAtom, CodecChars) :-
+valid_codec(TypeAtom, [TypeChar], CodecAtom, CodecChars) :-
     valid_codec_aux(TypeAtom, CodecAtom),
-    atom_chars(TypeAtom, TypeChars),
+    atom_chars(TypeAtom, [TypeChar|_]),
     atom_chars(CodecAtom, CodecChars).
 valid_codec_aux(audio, C) :- member(C, [aac, opus]).
 valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
