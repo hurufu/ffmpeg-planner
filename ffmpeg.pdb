@@ -1,17 +1,6 @@
-% FIXME: Use different S-expr parsing library that doesn't use character codes
 :- set_prolog_flag(double_quotes, chars).
 
-%:- use_module(library(assoc)).
-%:- use_module('sexpr-3.6.7.pl').
-%
-%main :-
-%    run(S), portray_clause(S).
-%
-%run(S) :-
-%    string_codes("(* 2 (+ 3 4))", C),
-%    codes_sexpr(C, S).
-
-%% Grammar %%%%%%%%%%%%%%%
+%% Grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ffmpeg_plan(Plan) --> "ffmpeg", steps(Plan).
 steps([]) --> "".
@@ -42,7 +31,21 @@ valid_codec(TypeAtom, TypeChars, CodecAtom, CodecChars) :-
 valid_codec_aux(audio, C) :- member(C, [aac, opus]).
 valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
 
-%% Main %%%%%%%%%%%%%%%%%
+%% S-Expr grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% DCG Utils %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+any_sequence([]) --> [].
+any_sequence([H|T]) --> [H], any_sequence(T).
+
+any_sequence_of_any_sequences([]) --> [].
+any_sequence_of_any_sequences([H|T]) --> any_sequence(H), any_sequence_of_any_sequences(T).
+
+concatenation(ListOfLists, Concatenation) :-
+    phrase(any_sequence_of_any_sequences(ListOfLists), Concatenation).
+
+%% Main %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 main :-
     main(A),
@@ -62,14 +65,3 @@ plan([
 
 sexpr_list_term(Lists, Terms) :-
     maplist(=.., Terms, Lists).
-
-%% Utils %%%%%%%%%%%%%%%%%%
-
-any_sequence([]) --> [].
-any_sequence([H|T]) --> [H], any_sequence(T).
-
-any_sequence_of_any_sequences([]) --> [].
-any_sequence_of_any_sequences([H|T]) --> any_sequence(H), any_sequence_of_any_sequences(T).
-
-concatenation(ListOfLists, Concatenation) :-
-    phrase(any_sequence_of_any_sequences(ListOfLists), Concatenation).
