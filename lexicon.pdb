@@ -7,3 +7,4 @@ pn_sg('Libx265', 'Libx265', neutr).
 pn_sg('Libx264', 'Libx264', neutr).
 pn_sg('Aac', 'Aac', neutr).
 pn_sg('Opus', 'Opus', neutr).
+pn_sg('Disc', 'Disc', neutr).

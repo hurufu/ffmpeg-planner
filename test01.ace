@@ -10,14 +10,14 @@ p:f0 is a file.
 
 #-- Init
 
-p:f0's name is "world.mp4". p:f0 is read from a disk. p:f0 has p:s00 which is a
+p:f0's name is "world.mp4". p:f0 is read from Disc. p:f0 has p:s00 which is a
 video encoded by Libx264. p:f0 has p:s01 which is an audio encoded by Aac.
 
 #-- Goal
 
 There is a file which has a name which is "hello.mkv", and the file has an
 audio which is encoded by Opus, and the file has a video which is encoded by
-Libx265. The file is written to a disk.
+Libx265. The file is written to Disc.
 
 #-- Tests
 
