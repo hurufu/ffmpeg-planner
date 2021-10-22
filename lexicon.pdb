@@ -1,7 +1,5 @@
 adj_itr(audio, audio).
 adj_itr(video, video).
-noun_sg(video, video, neutr).
-noun_sg(audio, audio, neutr).
 noun_sg(codec, codec, neutr).
 pn_sg('Libx265', 'Libx265', neutr).
 pn_sg('Libx264', 'Libx264', neutr).
