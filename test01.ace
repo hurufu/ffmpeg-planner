@@ -1,3 +1,5 @@
-John, v:encode a video using p:libx264!
-John, v:encode an audio using p:opus!
-John, v:write to a file X! X has a name which is "hello".
+p:f1 is a file. p:f1's name is "hello".
+p:f1 has a video. p:f1 has an audio.
+p:libs264, v:encode the video!
+p:opus, v:encode the audio!
+John, v:write p:f1!
