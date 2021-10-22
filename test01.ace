@@ -1,7 +1,8 @@
 #-- Axioms
-Every audio is a binary stream, and every video is a binary stream.
-Libx265 is a video codec, and Libx264 is a video codec.
-Aac is an audio codec, and Opus is an audio codec.
+
+Every audio is a binary stream, and every video is a binary stream. Libx265 is
+a video codec, and Libx264 is a video codec. Aac is an audio codec, and Opus is
+an audio codec.
 
 #-- Objects
 
@@ -9,10 +10,8 @@ p:f0 is a file.
 
 #-- Init
 
-p:f0's name is "world.mp4".
-p:f0 is read from a disk.
-p:f0 has p:s00 which is a video encoded by Libx264.
-p:f0 has p:s01 which is an audio encoded by Aac.
+p:f0's name is "world.mp4". p:f0 is read from a disk. p:f0 has p:s00 which is a
+video encoded by Libx264. p:f0 has p:s01 which is an audio encoded by Aac.
 
 #-- Goal
 
@@ -22,7 +21,7 @@ Libx265. The file is written to a disk.
 
 #-- Tests
 
-#There is a name of a file which has an audio.
-#Does a file that has a name which is "hello.mkv" have a video?
-#How many streams does a written file have?
-#An written file's stream is encoded by a codec.
+# There is a name of a file which has an audio.
+# Does a file that has a name which is "hello.mkv" have a video?
+# How many streams does a written file have?
+# An written file's stream is encoded by a codec.
