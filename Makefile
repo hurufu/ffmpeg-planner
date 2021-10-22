@@ -13,16 +13,13 @@ run-%: %.arg
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
 %.xml: lexicon.pdb %.ace
-	ape -ulexfile $< -guess -file $*.ace -cdrs -cparaphrase -cpnf >$@
-%.pnf: %.xml | debug-%
-	xpath -e 'concat("pnf(",string(//pnf/text()),").")' $< >$@
-	swipl -s $@ -g 'pnf(P), print_term(pnf(P), [tab_width(0)]), format(".~n", []), halt.' | sponge $@
+	ape -ulexfile $< -guess -file $*.ace -cdrs -cparaphrase >$@
 %.drs: %.xml | debug-%
 	xpath -e 'concat("drs(",string(//drs/text()),").")' $< >$@
 	swipl -s $@ -g 'drs(P), print_term(P, [tab_width(0)]), format(".~n", []), halt.' | sponge $@
 debug-%: %.xml
 	xmllint -format $< | pygmentize -l xml
 
-clean: F := $(wildcard *.scm *.arg *.pnf *.drs *.xml)
+clean: F := $(wildcard *.scm *.arg *.drs *.xml)
 clean:
 	$(if $(strip $F),rm -- $F,)
