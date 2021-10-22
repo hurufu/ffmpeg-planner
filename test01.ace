@@ -1,9 +1,27 @@
-p:f0 is a file. p:f0's name is "world".
-p:f1 is a file. p:f1's name is "hello".
-p:f0 has a video. p:f0 has an audio.
+#-- Axioms
+Every audio is a binary stream, and every video is a binary stream.
+Libx265 is a video codec, and libx264 is a video codec.
+Aac is an audio codec, and Opus is an audio codec.
 
-p:libs264, v:encode p:f0's video X!
-p:opus, v:encode p:f0's audio Y!
-p:f1, have X!
-p:f1, have Y!
-John, v:write p:f1!
+#-- Objects
+
+p:f0 is a file.
+
+#-- Init
+
+p:s00 is a video of p:f0.
+p:s01 is an audio of p:f0.
+p:s00 is encoded by Libx264.
+p:s01 is encoded by Aac.
+p:f0's name is "world.mp4".
+
+#-- Goal
+
+There is a file which has a name which is "hello.mkv", and the file has an
+audio which is encoded by Opus, and the file has a video which is encoded by
+Libx265. John, create the file!
+
+#-- Tests
+
+#There is a name of a file which has an audio.
+#Does a file that has a name which is "hello.mkv" have a video?

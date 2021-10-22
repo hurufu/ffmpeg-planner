@@ -12,8 +12,8 @@ run-%: %.arg
 %.arg: ffmpeg.pdb %.scm
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
-%.xml: %.ace
-	ape -guess -file $< -cdrspp -cdrs -cparaphrase -cpnf >$@
+%.xml: lexicon.pdb %.ace
+	ape -ulexfile $< -guess -file $*.ace -cdrspp -cdrs -cparaphrase -cpnf >$@
 %.pnf: %.xml | debug-%
 	xpath -e 'concat("pnf(",string(//pnf/text()),").")' $< >$@
 	swipl -s $@ -g 'pnf(P), print_term(pnf(P), [tab_width(0)]), format(".~n", []), halt.' | sponge $@
