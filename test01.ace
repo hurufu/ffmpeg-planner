@@ -32,3 +32,7 @@ encoded by Libx265. The file is written to Disc.
 
 # Does a file that has a name which is "hello.mkv" have a video?
 # How many streams does a written file have?
+# What is a read file?
+# Is there a written file?
+# Does a written file have a stream?
+# Does a written file have a name?
