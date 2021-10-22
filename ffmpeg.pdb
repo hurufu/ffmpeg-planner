@@ -5,7 +5,7 @@
 
 %% Grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ffmpeg_plan(Plan) --> "ffmpeg", steps(Plan).
+ffmpeg_plan(Plan) --> steps(Plan).
 steps([]) --> "".
 steps([H|T]) --> step(H), steps(T).
 step(input_file(FileNameAtom)) -->

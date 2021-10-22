@@ -2,15 +2,15 @@
 
 run: run-test01
 
-run-%: %.sh
-	sh --verbose $<
+run-%: %.arg
+	ffmpeg $(file < $<)
 
 %.scm: ffmpeg.pddl %.pddl
 	ff -o $< -f $*.pddl | sed -rne 's/[step 0-9]{9}: (.*)/(\1)/p' | tr '[:upper:]' '[:lower:]' >$@
 
-%.sh: ffmpeg.pdb %.scm
+%.arg: ffmpeg.pdb %.scm
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
-clean: F := $(wildcard *.scm *.sh)
+clean: F := $(wildcard *.scm *.arg)
 clean:
 	$(if $(strip $F),rm -- $F,)
