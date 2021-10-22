@@ -14,6 +14,7 @@
 
     (:predicates
         (file_name ?f - file ?n - string)
+        (has_stream ?f - file ?s - stream)
         (encoded_by_video_codec ?s - stream ?c - video_codec)
         (encoded_by_audio_codec ?s - stream ?c - audio_codec))
 
