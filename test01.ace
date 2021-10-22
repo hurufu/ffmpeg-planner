@@ -1,5 +1,9 @@
+p:f0 is a file. p:f0's name is "world".
 p:f1 is a file. p:f1's name is "hello".
-p:f1 has a video. p:f1 has an audio.
-p:libs264, v:encode the video!
-p:opus, v:encode the audio!
+p:f0 has a video. p:f0 has an audio.
+
+p:libs264, v:encode p:f0's video X!
+p:opus, v:encode p:f0's audio Y!
+p:f1, have X!
+p:f1, have Y!
 John, v:write p:f1!
