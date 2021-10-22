@@ -1,6 +1,7 @@
-.PHONY: run run-% clean
+.PHONY: run run-% clean debug-% ace
 
 run: run-test01
+ace: test01.pnf
 
 run-%: %.arg
 	ffmpeg $(file < $<)
@@ -11,10 +12,14 @@ run-%: %.arg
 %.arg: ffmpeg.pdb %.scm
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
-%.pnf: %.ace
-	ape -guess -file $< -cpnf | xpath -e 'concat("pnf(",string(//pnf/text()),").")' >$@
+%.xml: %.ace
+	ape -guess -file $< -cdrspp -cparaphrase -cpnf >$@
+%.pnf: %.xml | debug-%
+	xpath -e 'concat("pnf(",string(//pnf/text()),").")' $< >$@
 	swipl -s $@ -g 'pnf(P), print_term(pnf(P), [tab_width(0)]), format(".~n", []), halt.' | sponge $@
+debug-%: %.xml
+	xmllint -format $< | pygmentize -l xml
 
-clean: F := $(wildcard *.scm *.arg *.pnf)
+clean: F := $(wildcard *.scm *.arg *.pnf *.xml)
 clean:
 	$(if $(strip $F),rm -- $F,)
