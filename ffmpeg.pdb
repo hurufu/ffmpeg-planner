@@ -1,6 +1,8 @@
 :- set_prolog_flag(double_quotes, chars).
 :- initialization(sexpr_tests_are_passing).
 
+:- use_module(library(pio)).
+
 %% Grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ffmpeg_plan(Plan) --> "ffmpeg", steps(Plan).
@@ -12,9 +14,14 @@ step(input_file(FileNameAtom)) -->
     },
     ws, "-i", ws, FileNameChars.
 step(set_mapping(automatic)) --> "".
-step(use_codec(Type, Codec)) -->
+step(use_video_codec(_, Codec)) -->
     {
-        valid_codec(Type, TypeChars, Codec, CodecChars)
+        valid_codec(video, TypeChars, Codec, CodecChars)
+    },
+    ws, "-c:", TypeChars, ws, CodecChars.
+step(use_audio_codec(_, Codec)) -->
+    {
+        valid_codec(audio, TypeChars, Codec, CodecChars)
     },
     ws, "-c:", TypeChars, ws, CodecChars.
 step(output_file(FileNameAtom)) -->
@@ -42,7 +49,7 @@ spaced_sexpr([]) --> "".
 spaced_sexpr([H|T]) --> space, sexpr([H|T]).
 space --> filler([_|_]).
 filler([]) --> "".
-filler([_|T]) --> (" "|"\n"|"\t"), filler(T).
+filler([_|T]) --> ("\r"|" "|"\n"|"\t"), filler(T).
 word(A) --> character(C), word_aux(W), { atom_chars(A, [C|W]) }.
 word(N) --> number_aux([H|T]), { number_chars(N, [H|T]) }.
 number_aux([]) --> "".
@@ -73,6 +80,7 @@ sexpr_sanity_checks_are_passing :-
     sexpr_list("(hello)", [[hello]]),
     sexpr_list("()()", [[],[]]),
     sexpr_list("(a b)(c d)", [[a,b],[c,d]]),
+    sexpr_list("(a b)\r\n(c d)\r\n", [[a,b],[c,d]]),
     sexpr_list("a1", [a1]),
     sexpr_list("* 2 (+ 3 4)", [*, 2, [+, 3, 4]]),
     sexpr_list("(* 2 (+ 3 4))", [[*, 2, [+, 3, 4]]]).
@@ -103,4 +111,18 @@ main(A) :-
     sexpr_terms(S, T),
     phrase(ffmpeg_plan(T), A).
 
-plan("(input_file world.mkv)(set_mapping automatic)(use_codec video libx265)(use_codec audio opus)(output_file hello.mp4)").
+pio :-
+    pio('test01.scm').
+
+pio(ProblemFile) :-
+    pio(ProblemFile, Terms),
+    phrase(ffmpeg_plan(Terms), Args),
+    format("~s~n", [Args]).
+
+pio(ProblemFile, Terms) :-
+    phrase_from_file(any_sequence(Codes), ProblemFile),
+    string_codes(String, Codes),
+    string_chars(String, Chars),
+    sexpr_terms(Chars, Terms).
+
+plan("(input_file world.mkv)(set_mapping automatic)(use_video_codec s10 libx265)(use_audio_codec s11 opus)(output_file hello.mp4)").
