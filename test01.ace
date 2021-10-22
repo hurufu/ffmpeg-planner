@@ -1,0 +1,3 @@
+John, v:encode a video using p:libx264!
+John, v:encode an audio using p:opus!
+John, v:write to a file X! X has a name which is "hello".

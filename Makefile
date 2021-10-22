@@ -11,6 +11,9 @@ run-%: %.arg
 %.arg: ffmpeg.pdb %.scm
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
-clean: F := $(wildcard *.scm *.arg)
+%.pnf: %.ace
+	ape -guess -file $< -cpnf | xpath -e 'concat("pnf(",string(//pnf/text()),").")' >$@
+
+clean: F := $(wildcard *.scm *.arg *.pnf)
 clean:
 	$(if $(strip $F),rm -- $F,)
