@@ -2,10 +2,13 @@
 
 Every audio stream is a binary stream, and every video stream is a binary
 stream. Libx265 is a video codec, and Libx264 is a video codec. Aac is an audio
-codec, and Opus is an audio codec. If a file is read from Disc then the file
-isn't written to Disc. No audio stream is a video stream. No audio codec is a
-video codec. No video stream is encoded by an audio codec. No audio stream is
-encoded by a video codec.
+codec, and Opus is an audio codec.
+Every read file isn't written.
+Every written file isn't read.
+No audio stream is a video stream.
+No audio codec is a video codec.
+No video stream is encoded by an audio codec.
+No audio stream is encoded by a video codec.
 
 #-- Objects
 
@@ -13,15 +16,15 @@ p:f0 is a file.
 
 #-- Init
 
-p:f0's name is "world.mp4". p:f0 is read from Disc. p:f0 has p:s00 which is a
-video stream encoded by Libx264. p:f0 has p:s01 which is an audio stream
-encoded by Aac.
+p:f0's name is "world.mp4". p:f0 is read. p:f0 has p:s00 which is a
+video stream. p:s00 is encoded by Libx264. p:f0 has p:s01 which is an audio
+stream. p:s01 is encoded by Aac.
 
 #-- Goal
 
-There is a file which has a name which is "hello.mkv", and the file has an
-audio stream which is encoded by Opus, and the file has a video stream which is
-encoded by Libx265. The file is written to Disc.
+p:f1 is a file. p:f1's name is "hello.mkv". The file has an audio stream which
+is encoded by Opus. p:s10 is the stream. The file has a video stream which is
+encoded by Libx265. p:s11 is the stream. The file is written.
 
 #-- Theorems
 

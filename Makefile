@@ -1,7 +1,7 @@
 .PHONY: run run-% clean debug-% ace
 
 run: run-test01
-ace: test01.drs
+ace: test01.drs test01.txt
 
 run-%: %.arg
 	ffmpeg $(file < $<)
@@ -17,9 +17,11 @@ run-%: %.arg
 %.drs: %.xml | debug-%
 	xpath -e 'concat("drs(",string(//drs/text()),").")' $< >$@
 	swipl -s $@ -g 'drs(P), print_term(P, [tab_width(0)]), format(".~n", []), halt.' | sponge $@
+%.txt: %.ace
+	acerules $< $@
 debug-%: %.xml
 	xmllint -format $< | pygmentize -l xml
 
-clean: F := $(wildcard *.scm *.arg *.drs *.xml)
+clean: F := $(wildcard *.scm *.arg *.drs *.xml *.txt)
 clean:
 	$(if $(strip $F),rm -- $F,)
