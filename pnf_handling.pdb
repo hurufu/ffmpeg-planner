@@ -72,17 +72,3 @@ ut_fol_sanity_checks_are_passing :-
 
 all_tests_are_passing :-
      ut_fol_sanity_checks_are_passing.
-
-% Old
-%s(&(A,B), [and,Z,Y], []) :- t(A, Z), t(B, Y).
-%s(&(A,B), [and,Z,Y], [Z]) :- o(A, Z), t(B, Y).
-%s(&(A,B), [and,Z,Y], [Y]) :- t(A, Z), o(B, Y).
-%s(&(A,B), [and,Z,Y], [Z,Y]) :- o(A, Z), o(B, Y).
-%s(&(A,B), [and,T|X], O) :- t(A, T), s(B, [and|X], O).
-%s(&(A,B), [and,T|X], [T|O]) :- o(A, T), s(B, [and|X], O).
-%s(exists(A,B), [exists,[A],Y], O) :- e_check(A), s(B, Y, O).
-%s(exists(A,B), [exists,[A|X],Y], O) :- e_check(A), s(B, [exists,X,Y], O).
-%e_check(A) :- nonvar(A) -> throw(type_error(var,A)); true.
-%o(object(_,A,P,_,_,_,_)-_/_, [P,A]).
-%t(predicate(_,_,P,A,B)-_/_, [P,A,B]) :- dif(P, be), dif(P, =).
-%t(predicate(_,_,be,A,B)-_/_, [=,A,B]).
