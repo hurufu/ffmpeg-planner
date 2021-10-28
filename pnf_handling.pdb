@@ -39,6 +39,81 @@ tag_term(string(A), s(A)).
 differs_from_all(A, L) :- maplist(dif(A), L).
 must_be_variable(A) :- nonvar(A) -> throw(type_error(var,A)); true.
 
+pddl(O,G) --> "(define (problem test)", n,
+              "        (:domain ffmpeg1)", n,
+              "        ", objects(O), n,
+              "        (:init (dupa))", n,
+              "        ", goal(G), ")", n.
+n --> "\n".
+objects(V) --> "(:objects", sequence_of_objects_spaced(V), ")".
+goal(G) --> "(:goal", prefix(G), ")".
+
+prefix(e(P, M)) --> " (exists", list_of_variables(P), matrix(M), ")".
+
+sequence_of_objects_spaced([]) --> "".
+sequence_of_objects_spaced([O|T]) --> " ", single_object(O), sequence_of_objects_spaced(T).
+single_object(o(_, I)) --> identifier(I).
+
+matrix(a(L)) --> " (and", expression_list(L), ")".
+
+expression_list([]) --> "".
+expression_list([H|T]) --> " (", expression(H), ")", expression_list(T).
+expression(o(O,A)) --> { atom_chars(O,OC) }, OC, identifier(A).
+expression(p(P,A,B)) --> { atom_chars(P, PC) }, PC, identifier(A), identifier(B).
+
+identifier(i(V)) --> " ", variable(V).
+identifier(n(V)) --> " ", { atom_chars(V, VC) }, VC.
+identifier(s(V)) --> " ", { atom_chars(V, VC) }, VC.
+
+list_of_variables([i(H)|T]) --> " (", variable(H), list_of_variables_spaced(T), ")".
+list_of_variables_spaced([]) --> "".
+list_of_variables_spaced([i(H)|T]) --> " ", variable(H), list_of_variables_spaced(T).
+
+variable(A) --> "?", alpha(A).
+
+alnum(C) --> char(alnum, C).
+numeric(C) --> char(numer, C).
+alpha(C) --> char(alpha, C).
+char(Class, C) --> [C], { ychar(Class, C) }.
+ychar(numer, C) :- xchar(1,_,_, C).
+ychar(alpha, C) :- xchar(_,1,_, C).
+ychar(alnum, C) :- xchar(_,_,1, C).
+xchar(1,0,1,'0').
+xchar(1,0,1,'1').
+xchar(1,0,1,'2').
+xchar(1,0,1,'3').
+xchar(1,0,1,'4').
+xchar(1,0,1,'5').
+xchar(1,0,1,'6').
+xchar(1,0,1,'7').
+xchar(1,0,1,'8').
+xchar(1,0,1,'9').
+xchar(0,1,1,'a').
+xchar(0,1,1,'b').
+xchar(0,1,1,'c').
+xchar(0,1,1,'d').
+xchar(0,1,1,'e').
+xchar(0,1,1,'f').
+xchar(0,1,1,'g').
+xchar(0,1,1,'h').
+xchar(0,1,1,'i').
+xchar(0,1,1,'j').
+xchar(0,1,1,'k').
+xchar(0,1,1,'l').
+xchar(0,1,1,'m').
+xchar(0,1,1,'n').
+xchar(0,1,1,'o').
+xchar(0,1,1,'p').
+xchar(0,1,1,'q').
+xchar(0,1,1,'r').
+xchar(0,1,1,'s').
+xchar(0,1,1,'t').
+xchar(0,1,1,'u').
+xchar(0,1,1,'v').
+xchar(0,1,1,'w').
+xchar(0,1,1,'x').
+xchar(0,1,1,'y').
+xchar(0,1,1,'z').
 
 % UT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
