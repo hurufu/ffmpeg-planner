@@ -1,5 +1,5 @@
 :- set_prolog_flag(double_quotes, chars).
-:- initialization(sexpr_tests_are_passing).
+:- initialization(all_tests_are_passing).
 
 :- use_module(library(pio)).
 
@@ -10,9 +10,9 @@ steps([]) --> "".
 steps([H|T]) --> step(H), steps(T).
 step(open_file(_, FileNameAtom)) -->
     {
-        atom_chars(FileNameAtom, FileNameChars)
+        filename_adjusted(FileNameAtom, AdjustedFileNameChars)
     },
-    ws, "-i", ws, FileNameChars.
+    ws, "-i", ws, AdjustedFileNameChars.
 step(set_mapping(automatic)) --> "".
 step(use_video_codec(_, Codec)) -->
     {
@@ -38,6 +38,27 @@ valid_codec(TypeAtom, [TypeChar], CodecAtom, CodecChars) :-
     atom_chars(CodecAtom, CodecChars).
 valid_codec_aux(audio, C) :- member(C, [aac, opus]).
 valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
+
+% Workaround for not supported strings in PDDL
+% Replaces last "_" with "."
+filename_adjusted(FileNameAtom, AdjustedFileNameChars) :-
+    atom_chars(FileNameAtom, FileNameChars),
+    phrase(adjust(AdjustedFileNameChars), FileNameChars).
+
+adjust(X) --> dirname(D), basename(B), "_", suffix(S), { append([D,B,".",S], X) }.
+dirname([]) --> "". % Not implemented.
+basename([]) --> "".
+basename([H|T]) --> [H], basename(T).
+suffix("mp4") --> "mp4".
+suffix("mp3") --> "mp3".
+suffix("mkv") --> "mkv".
+suffix("avi") --> "avi".
+suffix("ogg") --> "ogg".
+suffix("webm") --> "webm".
+suffix("webp") --> "webp".
+
+ffmpeg_plan_tests_are_passing :-
+    filename_adjusted('hello_mp4', "hello.mp4").
 
 %% S-Expr grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -126,3 +147,7 @@ pio(ProblemFile, Terms) :-
     sexpr_terms(Chars, Terms).
 
 plan("(open_file world.mkv)(set_mapping automatic)(use_video_codec s10 libx265)(use_audio_codec s11 opus)(output_file hello.mp4)").
+
+all_tests_are_passing :-
+    sexpr_tests_are_passing,
+    ffmpeg_plan_tests_are_passing.
