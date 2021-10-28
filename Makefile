@@ -15,10 +15,10 @@ run-%: %.arg
 %.xml: %.ace
 	ape -guess -file $*.ace -cdrs -cpnf -cparaphrase >$@
 %.drs: %.xml | debug-%
-	xpath -e 'concat("drs(",string(//drs/text()),").")' $< >$@
+	xpath -q -e 'concat("drs(",string(//drs/text()),").")' $< >$@
 	swipl -s $@ -g 'drs(P), print_term(P, [tab_width(0)]), format(".~n", []), halt.' | sponge $@
 %.pnf: %.xml | debug-%
-	xpath -e 'concat("pnf(",string(//pnf/text()),").")' $< >$@
+	xpath -q -e 'concat("pnf(",string(//pnf/text()),").")' $< >$@
 	swipl -s $@ -g 'pnf(P), print_term(pnf(P), [tab_width(0)]), format(".~n", []), halt.' | sponge $@
 %.pddl: pnf_handling.pdb %.pnf
 	swipl -s $< -g "main('$*.pnf'),halt." >$@

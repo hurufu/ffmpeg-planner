@@ -5,7 +5,7 @@
 
 %% Grammar %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ffmpeg_plan(Plan) --> steps(Plan).
+ffmpeg_plan(Plan) --> "-loglevel warning ", steps(Plan).
 steps([]) --> "".
 steps([H|T]) --> step(H), steps(T).
 step(open_file(_, FileNameAtom)) -->
