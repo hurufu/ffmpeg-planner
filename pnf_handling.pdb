@@ -3,6 +3,17 @@
 
 :- use_module(library(dif)).
 
+main(AcePnfFile) :-
+    consult(AcePnfFile),
+    pnf(AcePnf),
+    pnf_pddl(AcePnf, ProblemDefinition),
+    write(ProblemDefinition).
+
+pnf_pddl(AcePnf, ProblemDefinition) :-
+    u(AcePnf, Formula, ObjectList),
+    phrase(pddl(ObjectList,Formula), PddlChars),
+    atom_chars(ProblemDefinition, PddlChars).
+
 % Unifies FOL formula with an equivalent one with all similar operators condensed
 % Extract all named entities to :objects
 % Unifies FOL formula in S-expr format with equivalent one where all 'be'
@@ -143,7 +154,7 @@ test(S, P, T, Y) :-
              p(=, n(f0), i(A))])).
 
 ut_fol_sanity_checks_are_passing :-
-     test(_,P,_,X), u(P,X,_).
+     test(_,P,_,X), u(P,X,O), phrase(pddl(O,X), _), !.
 
 all_tests_are_passing :-
      ut_fol_sanity_checks_are_passing.
