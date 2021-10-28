@@ -2,19 +2,37 @@
 % Alex Grabowski <alex.grabowski.a@gmail.com>
 % 27.10.2021
 
-% Handles dialect of S-expressions that is useful for PDDL generation.
-% TODO: Test if it is portable to other Prolog implementations
+% Handles quite strict dialect of S-expressions that is useful for PDDL
+% generation.
 
-:- module(sexpr, [sexpr_chars/2]).
+% I've decided to write this S-expr grammar, because the one I found at
+% [https://hackage.haskell.org/package/cpsa] wasn't a good fit. It relied on
+% SWI-Prolog extensions, didn't work with `set_prolog_flag(double_quotes, chars)`
+% and more importantly didn't terminate on my inputs.
+
+% TODO: Test if it is portable to other Prolog implementations
+% TODO: There should be a special 2nd order predicate that will generalize all this runtime var/1 checks
+
+:- module(sexpr, [sexpr_chars/2, sexpr_atom/2]).
 :- set_prolog_flag(double_quotes, chars).
 :- initialization(ut_sexpr_tests_are_passing).
 
+eval(_A, _B) :-
+    % If it is know that A may throw an exception then reorder A and B.
+    false.
+
 sexpr_chars(S, L) :- phrase(sexpr(S), L).
+
+sexpr_atom(S, A) :- atom(A) -> sexpr_atom_atom(S, A).
+sexpr_atom(S, A) :- var(A) -> sexpr_atom_var(S, A).
+sexpr_atom(_, A) :- compound(A) -> throw(type_error(atom|var, A)).
+sexpr_atom_atom(S, A) :- atom_chars(A, L), sexpr_chars(S, L).
+sexpr_atom_var(S, A) :- length(L, _), sexpr_chars(S, L), atom_chars(A, L).
 
 sexpr(L) --> "(", expr_list(L), ")".
 
-expr_list([]) --> "".
 expr_list([H|T]) --> expression(H), expr_list_aux(T).
+expr_list([]) --> "".
 expr_list_aux(L) --> ({ ground(L) }, expr_list_chk(L), !) | expr_list_gen(L).
 % WARN: Order is important for speed
 expr_list_gen([]) --> "".
@@ -29,8 +47,8 @@ expression_chk(E) --> (word(E) | variable(E) | sexpr(E)), !.
 variable(A) --> "?", word(A).
 word(A) --> ({ ground(A) }, word_chk(A), !) | word_gen(A).
 % WARN: Order is important for speed
-word_chk(A) --> alpha(H), { atom_chars(A, [H|T]) }, alnum_list(T).
-word_gen(A) --> alpha(H), alnum_list(T), { atom_chars(A, [H|T]) }.
+word_chk([H|T]) --> alpha(H), alnum_list(T).
+word_gen([H|T]) --> alpha(H), alnum_list(T).
 
 alnum_list(L) --> ({ ground(L) }, alnum_list_chk(L), !) | alnum_list_gen(L).
 % WARN: Order is important for speed
@@ -38,6 +56,15 @@ alnum_list_gen([]) --> "".
 alnum_list_gen([H|T]) --> alnum(H), alnum_list_gen(T).
 alnum_list_chk([H|T]) --> alnum(H), alnum_list_chk(T), !.
 alnum_list_chk([]) --> "".
+
+% Order is important to speed-up greedy match
+wss --> ws, wss.
+wss --> "".
+ws --> [C], { xws(C) }.
+xws(' ').
+xws('\t').
+xws('\n').
+xws('\r').
 
 alnum(C) --> char(alnum, C).
 numeric(C) --> char(numer, C).
@@ -82,11 +109,15 @@ xchar(0,1,1,'w').
 xchar(0,1,1,'x').
 xchar(0,1,1,'y').
 xchar(0,1,1,'z').
+xchar(0,1,0,'='). % Fix character class
 
 % TODO: Fix this test
 ut_sexpr_handles_empty_lists :-
     phrase(sexpr([[]]), ['('|T]), T = "())",
     phrase(sexpr(['']), _).
+
+ut_sexpr_more_tests :-
+    phrase(sexpr([exists, [_]]), "(exists (a))").
 
 ut_sexpr_alnum_list_is_deterministic :-
     findall(L, phrase(alnum_list(L), "hello"), ["hello"]),
