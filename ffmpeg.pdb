@@ -8,7 +8,7 @@
 ffmpeg_plan(Plan) --> steps(Plan).
 steps([]) --> "".
 steps([H|T]) --> step(H), steps(T).
-step(input_file(FileNameAtom)) -->
+step(open_file(_, FileNameAtom)) -->
     {
         atom_chars(FileNameAtom, FileNameChars)
     },
@@ -125,4 +125,4 @@ pio(ProblemFile, Terms) :-
     string_chars(String, Chars),
     sexpr_terms(Chars, Terms).
 
-plan("(input_file world.mkv)(set_mapping automatic)(use_video_codec s10 libx265)(use_audio_codec s11 opus)(output_file hello.mp4)").
+plan("(open_file world.mkv)(set_mapping automatic)(use_video_codec s10 libx265)(use_audio_codec s11 opus)(output_file hello.mp4)").

@@ -25,33 +25,35 @@ u(exists(A,B), e([i(A)|J],    X), O) :-
     must_be_variable(A),
     u(B, e(J, X), O),
     differs_from_all(i(A), J).
-u(&(A,B), a([AO,BO]), [AO,BO]) :- is_o(A, AO), is_o(B, BO).
-u(&(A,B), a([AO,BP]), [AO])    :- is_o(A, AO), is_p(B, BP).
-u(&(A,B), a([AP,BO]), [BO])    :- is_p(A, AP), is_o(B, BO).
-u(&(A,B), a([AP,BP]), [])      :- is_p(A, AP), is_p(B, BP).
-u(&(A,B), a([AO|AX]), [AO|O])  :- is_o(A, AO), u(B, a(AX), O).
-u(&(A,B), a([AP|AX]), O)       :- is_p(A, AP), u(B, a(AX), O).
+u(&(A,B), a([AO,BO]), O) :- is_o(A, AO, AOO), is_o(B, BO, BOO), append(AOO, BOO, O).
+u(&(A,B), a([AO,BP]), O) :- is_o(A, AO, AOO), is_p(B, BP, BOO), append(AOO, BOO, O).
+u(&(A,B), a([AP,BO]), O) :- is_p(A, AP, AOO), is_o(B, BO, BOO), append(AOO, BOO, O).
+u(&(A,B), a([AP,BP]), O) :- is_p(A, AP, AOO), is_p(B, BP, BOO), append(AOO, BOO, O).
+u(&(A,B), a([AO|AX]), O) :- is_o(A, AO, AOO), u(B, a(AX), OT), append(AOO, OT, O).
+u(&(A,B), a([AP|AX]), O) :- is_p(A, AP, AOO), u(B, a(AX), OT), append(AOO, OT, O).
 
-is_o(object(_,A,P,_,_,_,_)-_/_, o(P,X)) :-
-    tag(A, X).
-is_p(predicate(_,_,be,A,B)-_/_, p(=,X,Y)) :-
-    tag(A, X),
-    tag(B, Y).
-is_p(predicate(_,_,P,A,B)-_/_, p(P,X,Y)) :-
+is_o(object(_,A,P,_,_,_,_)-_/_, o(P,X), AO) :-
+    tag(A, X, AO).
+is_p(predicate(_,_,be,A,B)-_/_, p(=,X,Y), O) :-
+    tag(A, X, AO),
+    tag(B, Y, BO),
+    append(AO, BO, O).
+is_p(predicate(_,_,P,A,B)-_/_, p(P,X,Y), O) :-
     dif(=, P),
     dif(be, P),
-    tag(A, X),
-    tag(B, Y).
-tag(A, X) :- var(A) -> tag_variable(A,X); tag_term(A,X).
-tag_variable(A, i(A)).
-tag_term(named(A), n(A)).
-tag_term(string(A), s(A)).
+    tag(A, X, AO),
+    tag(B, Y, BO),
+    append(AO, BO, O).
+tag(A, X, O) :- var(A) -> tag_variable(A,X,O); tag_term(A,X,O).
+tag_variable(A, i(A), []).
+tag_term(named(A), n(A), [n(A)]).
+tag_term(string(A), s(A), [s(A)]).
 
 differs_from_all(A, L) :- maplist(dif(A), L).
 must_be_variable(A) :- nonvar(A) -> throw(type_error(var,A)); true.
 
 pddl(O,G) --> "(define (problem test)", n,
-              "        (:domain ffmpeg1)", n,
+              "        (:domain ffmpeg)", n,
               "        ", objects(O), n,
               "        (:init (dupa))", n,
               "        ", goal(G), ")", n.
@@ -62,8 +64,7 @@ goal(G) --> "(:goal", prefix(G), ")".
 prefix(e(P, M)) --> " (exists", list_of_variables(P), matrix(M), ")".
 
 sequence_of_objects_spaced([]) --> "".
-sequence_of_objects_spaced([O|T]) --> " ", single_object(O), sequence_of_objects_spaced(T).
-single_object(o(_, I)) --> identifier(I).
+sequence_of_objects_spaced([O|T]) --> " ", identifier(O), sequence_of_objects_spaced(T).
 
 matrix(a(L)) --> " (and", expression_list(L), ")".
 
