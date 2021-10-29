@@ -1,7 +1,7 @@
 .PHONY: run run-% clean debug-% ace
 
 run: run-test02
-ace: test01.drs test01.txt
+ace: test02.txt
 
 run-%: %.arg
 	ffmpeg $(file < $<)

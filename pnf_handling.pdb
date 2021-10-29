@@ -55,14 +55,16 @@ must_be_variable(A) :- nonvar(A) -> throw(type_error(var,A)); true.
 pddl(O,G) --> "(define (problem test)", n,
               "        (:domain ffmpeg)", n,
               "        ", objects(O), n,
-              "        (:init (dupa))", n,
+              "        (:init ", predefined_init, ")", n,
               "        ", goal(G), ")", n.
 n --> "\n".
-objects(V) --> "(:objects", sequence_of_objects_spaced(V), ")".
+objects(V) --> "(:objects", sequence_of_objects_spaced(V), predefined_objects, ")".
 goal(G) --> "(:goal", prefix(G), ")".
 
 prefix(e(P, M)) --> " (exists", list_of_variables(P), matrix(M), ")".
 
+predefined_objects --> " f0 sample_mp4".
+predefined_init --> "(file f0) (name sample_mp4) (have f0 sample_mp4)".
 sequence_of_objects_spaced([]) --> "".
 sequence_of_objects_spaced([O|T]) --> " ", identifier(O), sequence_of_objects_spaced(T).
 
