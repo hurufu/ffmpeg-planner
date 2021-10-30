@@ -61,14 +61,23 @@ n --> "\n".
 objects(V) --> "(:objects", sequence_of_objects_spaced(V), predefined_objects, ")".
 goal(G) --> "(:goal", prefix(G), ")".
 
-prefix(e(P, M)) --> " (exists", list_of_variables(P), matrix(M), ")".
+prefix(e(P, M)) --> " (exists", list_of_variables(P), n,
+     "                       ", matrix(M), ")".
 
-predefined_objects --> " f0 sample_mp4".
-predefined_init --> "(file f0) (name sample_mp4) (have f0 sample_mp4)".
+predefined_objects --> " f0 sample_mp4 s00 s01".
+predefined_init --> "(file f0)", n,
+     "               (name sample_mp4)", n,
+     "               (have f0 sample_mp4)", n,
+     "               (stream s00)", n,
+     "               (stream s01)", n,
+     "               (have f0 s00)", n,
+     "               (have f0 s01)", n,
+     "               (encode Aac s00)", n,
+     "               (encode Libx264 s01)".
 sequence_of_objects_spaced([]) --> "".
-sequence_of_objects_spaced([O|T]) --> " ", identifier(O), sequence_of_objects_spaced(T).
+sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(T).
 
-matrix(a(L)) --> " (and", expression_list(L), ")".
+matrix(a(L)) --> "(and", expression_list(L), ")".
 
 expression_list([]) --> "".
 expression_list([H|T]) --> " (", expression(H), ")", expression_list(T).

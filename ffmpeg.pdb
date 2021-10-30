@@ -24,11 +24,11 @@ step(use_audio_codec(_, Codec)) -->
         valid_codec(audio, TypeChars, Codec, CodecChars)
     },
     ws, "-c:", TypeChars, ws, CodecChars.
-step(output_file(FileNameAtom)) -->
+step(write_file(_, FileNameAtom)) -->
     {
-        atom_chars(FileNameAtom, FileNameChars)
+        filename_adjusted(FileNameAtom, AdjustedFileNameChars)
     },
-    ws, "-o", ws, FileNameChars.
+    ws, AdjustedFileNameChars.
 
 ws --> " ".
 
