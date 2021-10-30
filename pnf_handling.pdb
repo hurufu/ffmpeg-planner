@@ -75,7 +75,13 @@ predefined_init --> "(file f0)", n,
      "               (have f0 s00)", n,
      "               (have f0 s01)", n,
      "               (encode Aac s00)", n,
-     "               (encode Libx264 s01)".
+     "               (encode Libx264 s01)", n,
+                     timeless.
+timeless -->
+     "               (codec cv Libx264)", n,
+     "               (codec cv Libx265)", n,
+     "               (codec ca Aac)", n,
+     "               (codec ca Opus)".
 sequence_of_objects_spaced([]) --> "".
 sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(T).
 
