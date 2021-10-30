@@ -1,0 +1,3 @@
+[submodule "AceRules"]
+	path = AceRules
+	url = git@github.com:hurufu/AceRules.git
