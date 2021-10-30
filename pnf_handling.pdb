@@ -1,5 +1,7 @@
+:- module(pnf_handling, [pnf_pddl/2]).
+
 :- set_prolog_flag(double_quotes, chars).
-:- initialization(all_tests_are_passing).
+%:- initialization(all_tests_are_passing).
 
 :- use_module(library(dif)).
 
@@ -32,13 +34,13 @@ u(&(A,B), a([AP,BP]), O) :- is_p(A, AP, AOO), is_p(B, BP, BOO), append(AOO, BOO,
 u(&(A,B), a([AO|AX]), O) :- is_o(A, AO, AOO), u(B, a(AX), OT), append(AOO, OT, O).
 u(&(A,B), a([AP|AX]), O) :- is_p(A, AP, AOO), u(B, a(AX), OT), append(AOO, OT, O).
 
-is_o(object(_,A,P,_,_,_,_)-_/_, o(P,X), AO) :-
+is_o(object(_,A,P,_,_,_,_)-_, o(P,X), AO) :-
     tag(A, X, AO).
-is_p(predicate(_,_,be,A,B)-_/_, p(=,X,Y), O) :-
+is_p(predicate(_,_,be,A,B)-_, p(=,X,Y), O) :-
     tag(A, X, AO),
     tag(B, Y, BO),
     append(AO, BO, O).
-is_p(predicate(_,_,P,A,B)-_/_, p(P,X,Y), O) :-
+is_p(predicate(_,_,P,A,B)-_, p(P,X,Y), O) :-
     dif(=, P),
     dif(be, P),
     tag(A, X, AO),
@@ -73,7 +75,13 @@ predefined_init --> "(file f0)", n,
      "               (have f0 s00)", n,
      "               (have f0 s01)", n,
      "               (encode Aac s00)", n,
-     "               (encode Libx264 s01)".
+     "               (encode Libx264 s01)", n,
+                     timeless.
+timeless -->
+     "               (codec cv Libx264)", n,
+     "               (codec cv Libx265)", n,
+     "               (codec ca Aac)", n,
+     "               (codec ca Opus)".
 sequence_of_objects_spaced([]) --> "".
 sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(T).
 

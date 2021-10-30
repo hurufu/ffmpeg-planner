@@ -1,13 +1,18 @@
 (define (domain ffmpeg)
         (:requirements :equality)
-        (:constants Libx264 Libx265 Aac Opus)
+        (:constants
+            Libx264 Libx265
+            Aac Opus
+            ca cv cs)
         (:predicates
             (file ?a)
             (name ?a)
             (have ?a ?b)
             (stream ?s)
             (encode ?c ?s)
-            (opened ?f))
+            (codec ?type ?codec_name)
+            (opened ?f)
+            (written ?f))
         (:action OPEN_FILE
             :parameters (?f ?n)
             :precondition (and (file ?f)
@@ -23,4 +28,16 @@
                                         (have ?f ?n))))
             :effect (and (file ?f)
                          (name ?n)
-                         (have ?f ?n))))
+                         (have ?f ?n)
+                         (written ?f)))
+        (:action USE_CODEC
+            :parameters (?kind ?replica ?codec)
+            :vars (?original ?source ?destination)
+            :precondition (and (stream ?original)
+                               (file ?source)
+                               (codec ?kind ?codec)
+                               (have ?source ?original)
+                               (opened ?source)
+                               (not (written ?destination)))
+            :effect (and (have ?destination ?replica)
+                         (stream ?replica))))

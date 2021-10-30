@@ -14,36 +14,33 @@ step(open_file(_, FileNameAtom)) -->
     },
     ws, "-i", ws, AdjustedFileNameChars.
 step(set_mapping(automatic)) --> "".
-step(use_video_codec(_, Codec)) -->
+step(use_codec(KindAtom, _, Codec)) -->
     {
-        valid_codec(video, TypeChars, Codec, CodecChars)
+        valid_codec(KindAtom, KindChars, Codec, CodecChars)
     },
-    ws, "-c:", TypeChars, ws, CodecChars.
-step(use_audio_codec(_, Codec)) -->
-    {
-        valid_codec(audio, TypeChars, Codec, CodecChars)
-    },
-    ws, "-c:", TypeChars, ws, CodecChars.
+    ws, "-c:", KindChars, ws, CodecChars.
 step(write_file(_, FileNameAtom)) -->
     {
-        filename_adjusted(FileNameAtom, AdjustedFileNameChars)
+        filename_adjusted(FileNameAtom, AdjustedFileNameChars), !
     },
     ws, AdjustedFileNameChars.
 
 ws --> " ".
 
-valid_codec(TypeAtom, [TypeChar], CodecAtom, CodecChars) :-
-    valid_codec_aux(TypeAtom, CodecAtom),
-    atom_chars(TypeAtom, [TypeChar|_]),
+valid_codec(KindAtom, [KindChar], CodecAtom, CodecChars) :-
+    valid_codec_aux(KindAtom, CodecAtom),
+    atom_chars(KindAtom, [_,KindChar|_]),
     atom_chars(CodecAtom, CodecChars).
-valid_codec_aux(audio, C) :- member(C, [aac, opus]).
-valid_codec_aux(video, C) :- member(C, [libx264, libx265]).
+valid_codec_aux(ca, C) :- member(C, [aac, opus]).
+valid_codec_aux(cv, C) :- member(C, [libx264, libx265]).
 
 % Workaround for not supported strings in PDDL
 % Replaces last "_" with "."
 filename_adjusted(FileNameAtom, AdjustedFileNameChars) :-
     atom_chars(FileNameAtom, FileNameChars),
     phrase(adjust(AdjustedFileNameChars), FileNameChars).
+filename_adjusted(FileNameAtom, FileNameChars) :-
+    atom_chars(FileNameAtom, FileNameChars).
 
 adjust(X) --> dirname(D), basename(B), "_", suffix(S), { append([D,B,".",S], X) }.
 dirname([]) --> "". % Not implemented.
