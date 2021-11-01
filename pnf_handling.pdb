@@ -67,21 +67,28 @@ prefix(e(P, M)) --> " (exists", list_of_variables(P), n,
      "                       ", matrix(M), ")".
 
 predefined_objects --> " f0 sample_mp4 s00 s01".
-predefined_init --> "(file f0)", n,
+predefined_init --> "(input-file f0)", n,
      "               (name sample_mp4)", n,
+     "               (taken sample_mp4)", n,
      "               (have f0 sample_mp4)", n,
      "               (stream s00)", n,
+     "               (audio-stream s00)", n,
      "               (stream s01)", n,
+     "               (video-stream s01)", n,
      "               (have f0 s00)", n,
      "               (have f0 s01)", n,
      "               (encode Aac s00)", n,
      "               (encode Libx264 s01)", n,
                      timeless.
 timeless -->
-     "               (codec cv Libx264)", n,
-     "               (codec cv Libx265)", n,
-     "               (codec ca Aac)", n,
-     "               (codec ca Opus)".
+     "               (codec Libx264)", n,
+     "               (codec Libx265)", n,
+     "               (codec Aac)", n,
+     "               (codec Libopus)", n,
+     "               (video-codec Libx264)", n,
+     "               (video-codec Libx265)", n,
+     "               (audio-codec Aac)", n,
+     "               (audio-codec Libopus)".
 sequence_of_objects_spaced([]) --> "".
 sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(T).
 
