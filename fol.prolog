@@ -64,27 +64,22 @@ g((
     r(Op, Class, AX, BX).
 
 g((
-    compa(exists(A,B), e([A],BX)) :-
+    compa(U, UX) :-
         compa(B, BX)
 )) :-
-    q(BX); BX = f(_,_).
+    quantifier(OpA, OpX),
+    qx(OpX, BX),
+    U =.. [OpA,A,B],
+    UX =.. [OpX,[A],BX].
 
 g((
-    compa(exists(A,B), e([A|BV],BX)) :-
-        compa(B, e(BV,BX))
-)).
-
-g((
-    compa(forall(A,B), f([A],BX)) :-
-        compa(B, BX)
+    compa(U, UX) :-
+        compa(B, UY)
 )) :-
-    q(BX); BX = e(_,_).
-
-g((
-    compa(forall(A,B), f([A|BV],BX)) :-
-        compa(B, f(BV,BX))
-)).
-
+    quantifier(OpA, OpX),
+    U =.. [OpA,A,B],
+    UX =.. [OpX,[A|BV],BX],
+    UY =.. [OpX,BV,BX].
 
 join(Class, A, B, J) :-
     must_succeed(join_aux(Class,A,B,J)).
@@ -157,6 +152,10 @@ q(p(_,_,_)).
 q(a(_)).
 q(o(_)).
 q(n(_)).
+qx(f, e(_,_)).
+qx(e, f(_,_)).
+qx(f, X) :- q(X).
+qx(_, X) :- q(X).
 
 map_op(&, a).
 map_op(v, o).
