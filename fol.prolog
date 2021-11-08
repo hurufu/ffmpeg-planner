@@ -40,12 +40,9 @@ compact(FolFormula, CompactFolFormula, ContainedProperNames) :-
     ).
 
 g((
-    compa(b(N,R), b(N,R))
-)).
-
-g((
-    compa(p(V,SR,OR), p(V,SR,OR))
-)).
+    compa(U, U)
+)) :-
+    l(U).
 
 g((
     compa(-(A), n(AX)) :-
@@ -147,11 +144,12 @@ classify(o, nonet, n, a).
 classify(o, right, n, o).
 classify(o, none, n, n).
 
-q(b(_,_)).
-q(p(_,_,_)).
+l(b(_,_)).
+l(p(_,_,_)).
 q(a(_)).
 q(o(_)).
 q(n(_)).
+q(X) :- l(X).
 qx(f, e(_,_)).
 qx(e, f(_,_)).
 qx(f, X) :- q(X).
