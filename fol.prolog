@@ -11,9 +11,15 @@ main(AcePnfFile) :-
     pnf_pddl(AcePnf, ProblemDefinition),
     write(ProblemDefinition).
 
+pnf_test(ProblemDefinition) :-
+    tt(TestPnf),
+    pnf_pddl(TestPnf, ProblemDefinition).
+
 pnf_pddl(AcePnf, ProblemDefinition) :-
-    u(AcePnf, Formula, ObjectList),
+    compact(AcePnf, Formula, ObjectList),
     phrase(pddl(ObjectList,Formula), PddlChars),
+   %phrase(objects(ObjectList), PddlChars),
+   %phrase(goal(Formula), PddlChars),
     atom_chars(ProblemDefinition, PddlChars).
 
 % Unifies APE FOL formula with a compact one which can be easily converted to
@@ -258,15 +264,12 @@ all_different([H|T]) :-
 
 pddl(O,G) --> "(define (problem test)", n,
               "        (:domain ffmpeg)", n,
+              "        (:requirements :equality)", n,
               "        ", objects(O), n,
               "        (:init ", predefined_init, ")", n,
               "        ", goal(G), ")", n.
 n --> "\n".
 objects(V) --> "(:objects", sequence_of_objects_spaced(V), predefined_objects, ")".
-goal(G) --> "(:goal", prefix(G), ")".
-
-prefix(e(P, M)) --> " (exists", list_of_variables(P), n,
-     "                       ", matrix(M), ")".
 
 predefined_objects --> " f0 sample_mp4 s00 s01".
 predefined_init --> "(input-file f0)", n,
@@ -294,12 +297,19 @@ timeless -->
 sequence_of_objects_spaced([]) --> "".
 sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(T).
 
-matrix(a(L)) --> "(and", expression_list(L), ")".
+goal(G) --> "(:goal ", ex(G), ")".
 
-expression_list([]) --> "".
-expression_list([H|T]) --> " (", expression(H), ")", expression_list(T).
-expression(o(O,A)) --> { atom_chars(O,OC) }, OC, identifier(A).
-expression(p(P,A,B)) --> { atom_chars(P, PC) }, PC, identifier(A), identifier(B).
+ex(ax([])) --> "".
+ex(ox([])) --> "".
+ex(b(O,A)) --> { atom_chars(O,OC) }, "(", OC, identifier(A), ")".
+ex(p(P,A,B)) --> { atom_chars(P, PC) }, "(", PC, identifier(A), identifier(B), ")".
+ex(n(X)) --> "(not ", ex(X), ")".
+ex(e(H, X)) --> "(exists", list_of_variables(H), " ", ex(X), ")".
+ex(f(H, X)) --> "(forall", list_of_variables(H), " ", ex(X), ")".
+ex(a([H|T])) --> "(and ", ex(H), " ", ex(ax(T)), ")".
+ex(o([H|T])) --> "(or ", ex(H), " ", ex(ox(T)), ")".
+ex(ax([H|T])) --> ex(H), " ", ex(ax(T)).
+ex(ox([H|T])) --> ex(H), " ", ex(ox(T)).
 
 identifier(i(V)) --> " ", variable(V).
 identifier(n(V)) --> " ", { atom_chars(V, VC) }, VC.
@@ -309,7 +319,7 @@ list_of_variables([i(H)|T]) --> " (", variable(H), list_of_variables_spaced(T), 
 list_of_variables_spaced([]) --> "".
 list_of_variables_spaced([i(H)|T]) --> " ", variable(H), list_of_variables_spaced(T).
 
-variable(A) --> "?", alpha(A).
+variable(V) --> "?", alpha(A), alpha(B), { atom_chars(V, [A,B]) }.
 
 alnum(C) --> char(alnum, C).
 numeric(C) --> char(numer, C).
@@ -360,7 +370,7 @@ xchar(0,1,1,'z').
 % Replaces last "_" with "."
 filename_adjusted(GoodFileNameAtom, PddlFileNameChars) :-
     atom_chars(GoodFileNameAtom, GoodFileNameChars),
-    phrase(adjust(GoodFileNameChars), PddlFileNameChars).
+    phrase(adjust(GoodFileNameChars), PddlFileNameChars), !.
 
 adjust(X) --> dirname(D), basename(B), "_", suffix(S), { append([D,B,".",S], X) }.
 dirname([]) --> "". % Not implemented.
@@ -412,7 +422,7 @@ test(S, P, T, Y) :-
              p(have, i(A), i(B)),
              p(=, n(f0), i(A))])).
 
-tt(exists(_34206,exists(_34238,exists(_34270,exists(_34302,exists(_34334,exists(_34366,exists(_34398,exists(_34430,exists(_34462,exists(_34494,exists(_34526,exists(_34558,exists(_34590,exists(_34622,exists(_34654,exists(_34686,exists(_34718,exists(_34750,exists(_34782,forall(_39780,forall(_39812,forall(_40446,forall(_40478,forall(_41112,forall(_41144,forall(_41778,forall(_41810,forall(_42444,forall(_42476,forall(_43110,forall(_43142,forall(_43776,forall(_43808,forall(_44442,forall(_44474,forall(_45108,forall(_45140,&(object(_107538,_34206,name,countable,na,eq,1)-1,&(predicate(_107538,_34238,be,string('sample.mkv'),_34206)-1,&(object(_107538,_34270,file,countable,na,eq,1)-1,&(predicate(_107538,_34302,be,named(f1),_34270)-1,&(object(_107538,_34334,stream,countable,na,eq,1)-1,&(predicate(_107538,_34366,be,named(s11),_34334)-1,&(object(_107538,_34398,stream,countable,na,eq,1)-1,&(predicate(_107538,_34430,be,named(s10),_34398)-1,&(object(_107538,_34462,audio-stream,countable,na,eq,1)-1,&(predicate(_107538,_34494,be,named(s11),_34462)-1,&(object(_107538,_34526,video-stream,countable,na,eq,1)-1,&(predicate(_107538,_34558,be,named(s10),_34526)-1,&(object(_107538,_34590,output-file,countable,na,eq,1)-1,&(predicate(_107538,_34622,be,named(f1),_34590)-1,&(predicate(_107538,_34654,have,named(f1),string('sample.mkv'))-1,&(predicate(_107538,_34686,have,named(f1),named(s11))-1,&(predicate(_107538,_34718,have,named(f1),named(s10))-1,&(predicate(_107538,_34750,encode,named('Libx265'),named(s10))-1,&(predicate(_107538,_34782,encode,named('Libopus'),named(s11))-1,&(v(- (object(_107538,_39780,codec,countable,na,eq,1)-1),- (predicate(_107538,_39812,be,named(f1),_39780)-1)),&(v(- (object(_107538,_40446,stream,countable,na,eq,1)-1),- (predicate(_107538,_40478,be,named(f1),_40446)-1)),&(v(- (object(_107538,_41112,name,countable,na,eq,1)-1),- (predicate(_107538,_41144,be,named(f1),_41112)-1)),&(v(- (object(_107538,_41778,codec,countable,na,eq,1)-1),- (predicate(_107538,_41810,be,named(s10),_41778)-1)),&(v(- (object(_107538,_42444,codec,countable,na,eq,1)-1),- (predicate(_107538,_42476,be,named(s11),_42444)-1)),&(v(- (object(_107538,_43110,file,countable,na,eq,1)-1),- (predicate(_107538,_43142,be,named(s10),_43110)-1)),&(v(- (object(_107538,_43776,file,countable,na,eq,1)-1),-(predicate(_107538,_43808,be,named(s11),_43776)-1)),&(v(- (object(_107538,_44442,name,countable,na,eq,1)-1),- (predicate(_107538,_44474,be,named(s10),_44442)-1)),v(- (object(_107538,_45108,name,countable,na,eq,1)-1),- (predicate(_107538,_45140,be,named(s11),_45108)-1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))).
+tt(exists(_34206,exists(_34238,exists(_34270,exists(_34302,exists(_34334,exists(_34366,exists(_34398,exists(_34430,exists(_34462,exists(_34494,exists(_34526,exists(_34558,exists(_34590,exists(_34622,exists(_34654,exists(_34686,exists(_34718,exists(_34750,exists(_34782,forall(_39780,forall(_39812,forall(_40446,forall(_40478,forall(_41112,forall(_41144,forall(_41778,forall(_41810,forall(_42444,forall(_42476,forall(_43110,forall(_43142,forall(_43776,forall(_43808,forall(_44442,forall(_44474,forall(_45108,forall(_45140,&(object(_107538,_34206,name,countable,na,eq,1)-1,&(predicate(_107538,_34238,be,string('sample.mkv'),_34206)-1,&(object(_107538,_34270,file,countable,na,eq,1)-1,&(predicate(_107538,_34302,be,named(f1),_34270)-1,&(object(_107538,_34334,stream,countable,na,eq,1)-1,&(predicate(_107538,_34366,be,named(s11),_34334)-1,&(object(_107538,_34398,stream,countable,na,eq,1)-1,&(predicate(_107538,_34430,be,named(s10),_34398)-1,&(object(_107538,_34462,'audio-stream',countable,na,eq,1)-1,&(predicate(_107538,_34494,be,named(s11),_34462)-1,&(object(_107538,_34526,'video-stream',countable,na,eq,1)-1,&(predicate(_107538,_34558,be,named(s10),_34526)-1,&(object(_107538,_34590,'output-file',countable,na,eq,1)-1,&(predicate(_107538,_34622,be,named(f1),_34590)-1,&(predicate(_107538,_34654,have,named(f1),string('sample.mkv'))-1,&(predicate(_107538,_34686,have,named(f1),named(s11))-1,&(predicate(_107538,_34718,have,named(f1),named(s10))-1,&(predicate(_107538,_34750,encode,named('Libx265'),named(s10))-1,&(predicate(_107538,_34782,encode,named('Libopus'),named(s11))-1,&(v(- (object(_107538,_39780,codec,countable,na,eq,1)-1),- (predicate(_107538,_39812,be,named(f1),_39780)-1)),&(v(- (object(_107538,_40446,stream,countable,na,eq,1)-1),- (predicate(_107538,_40478,be,named(f1),_40446)-1)),&(v(- (object(_107538,_41112,name,countable,na,eq,1)-1),- (predicate(_107538,_41144,be,named(f1),_41112)-1)),&(v(- (object(_107538,_41778,codec,countable,na,eq,1)-1),- (predicate(_107538,_41810,be,named(s10),_41778)-1)),&(v(- (object(_107538,_42444,codec,countable,na,eq,1)-1),- (predicate(_107538,_42476,be,named(s11),_42444)-1)),&(v(- (object(_107538,_43110,file,countable,na,eq,1)-1),- (predicate(_107538,_43142,be,named(s10),_43110)-1)),&(v(- (object(_107538,_43776,file,countable,na,eq,1)-1),-(predicate(_107538,_43808,be,named(s11),_43776)-1)),&(v(- (object(_107538,_44442,name,countable,na,eq,1)-1),- (predicate(_107538,_44474,be,named(s10),_44442)-1)),v(- (object(_107538,_45108,name,countable,na,eq,1)-1),- (predicate(_107538,_45140,be,named(s11),_45108)-1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))).
 
 ut_fol_sanity_checks_are_passing :-
      test(_,P,_,X), u(P,X,O), phrase(pddl(O,X), _), !.
