@@ -58,7 +58,7 @@ g((
     univ_a(U, Op, [A,B]),
     map_op(Op, MappedOp),
     UX =.. [MappedOp,X],
-    r(Op, Class, AX, BX).
+    classify(MappedOp, Class, AX, BX).
 
 g((
     compa(U, UX) :-
@@ -85,71 +85,28 @@ join_aux( left, A, B, J) :- A =.. [_,F],              append([ F ,[B]], J).
 join_aux(right, A, B, J) :- B =.. [_,G],              append([[A], G ], J).
 join_aux( none, A, B, J) :-                           append([[A],[B]], J).
 
-r(UpperOp, Class, A, B) :-
-    map_op(UpperOp, Op),
+classify(P, Class, A, B) :-
+    i(U),
     q(A),
     q(B),
-    A =.. [AH|_],
-    B =.. [BH|_],
-    classify(Op, Class, AH, BH).
-
-classify(a, none, b, b).
-classify(a, none, b, p).
-classify(a, right, b, a).
-classify(a, none, b, o).
-classify(a, none, b, n).
-classify(a, none, p, b).
-classify(a, none, p, p).
-classify(a, right, p, a).
-classify(a, none, p, o).
-classify(a, none, p, n).
-classify(a, left, a, b).
-classify(a, left, a, p).
-classify(a, both, a, a).
-classify(a, left, a, o).
-classify(a, left, a, n).
-classify(a, none, o, b).
-classify(a, none, o, p).
-classify(a, right, o, a).
-classify(a, none, o, o).
-classify(a, none, o, n).
-classify(a, none, n, b).
-classify(a, none, n, p).
-classify(a, right, n, a).
-classify(a, none, n, o).
-classify(a, none, n, n).
-classify(o, none, b, b).
-classify(o, none, b, p).
-classify(o, none, b, a).
-classify(o, right, b, o).
-classify(o, none, b, n).
-classify(o, none, p, b).
-classify(o, none, p, p).
-classify(o, none, p, a).
-classify(o, right, p, o).
-classify(o, none, p, n).
-classify(o, none, a, b).
-classify(o, none, a, p).
-classify(o, none, a, a).
-classify(o, right, a, o).
-classify(o, none, a, n).
-classify(o, left, o, b).
-classify(o, left, o, p).
-classify(o, left, o, a).
-classify(o, both, o, o).
-classify(o, left, o, n).
-classify(o, none, n, b).
-classify(o, none, n, p).
-classify(o, nonet, n, a).
-classify(o, right, n, o).
-classify(o, none, n, n).
+    U =.. [P|_],
+    A =.. [AF|_],
+    B =.. [BF|_],
+    classify_aux(P, Class, AF, BF).
+classify_aux(A,  both, A, A).
+classify_aux(A,  left, A, X) :- X \= A.
+classify_aux(A, right, X, A) :- X \= A.
+classify_aux(A,  none, X, Y) :- X \= A, Y \= A.
 
 l(b(_,_)).
 l(p(_,_,_)).
-q(a(_)).
-q(o(_)).
-q(n(_)).
-q(X) :- l(X).
+i(a(_)).
+i(o(_)).
+u(n(_)).
+q(X) :-
+    u(X);
+    i(X);
+    l(X).
 qx(f, e(_,_)).
 qx(e, f(_,_)).
 qx(f, X) :- q(X).
