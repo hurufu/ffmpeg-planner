@@ -296,17 +296,15 @@ sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(
 
 goal(G) --> "(:goal ", ex(G), ")".
 
-ex(ax([])) --> "".
-ex(ox([])) --> "".
 ex(b(O,A)) --> { atom_chars(O,OC) }, "(", OC, identifier(A), ")".
 ex(p(P,A,B)) --> { atom_chars(P, PC) }, "(", PC, identifier(A), identifier(B), ")".
 ex(n(X)) --> "(not ", ex(X), ")".
 ex(e(H, X)) --> "(exists", list_of_variables(H), " ", ex(X), ")".
 ex(f(H, X)) --> "(forall", list_of_variables(H), " ", ex(X), ")".
-ex(a([H|T])) --> "(and ", ex(H), " ", ex(ax(T)), ")".
-ex(o([H|T])) --> "(or ", ex(H), " ", ex(ox(T)), ")".
-ex(ax([H|T])) --> ex(H), " ", ex(ax(T)).
-ex(ox([H|T])) --> ex(H), " ", ex(ox(T)).
+ex(a(L)) --> "(and", ex(l(L)), ")".
+ex(o(L)) --> "(or", ex(l(L)), ")".
+ex(l([])) --> "".
+ex(l([H|T])) --> " ", ex(H), ex(l(T)).
 
 identifier(i(V)) --> " ", variable(V).
 identifier(n(V)) --> " ", { atom_chars(V, VC) }, VC.
@@ -316,7 +314,7 @@ list_of_variables([i(H)|T]) --> " (", variable(H), list_of_variables_spaced(T), 
 list_of_variables_spaced([]) --> "".
 list_of_variables_spaced([i(H)|T]) --> " ", variable(H), list_of_variables_spaced(T).
 
-variable(V) --> "?", alpha(A), alpha(B), { atom_chars(V, [A,B]) }.
+variable(V) --> "?", alpha(A), alnum(B), { atom_chars(V, [A,B]) }.
 
 alnum(C) --> char(alnum, C).
 numeric(C) --> char(numer, C).
