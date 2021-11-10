@@ -271,7 +271,7 @@ list_of_variables([i(H)|T]) --> " (", variable(H), list_of_variables_spaced(T), 
 list_of_variables_spaced([]) --> "".
 list_of_variables_spaced([i(H)|T]) --> " ", variable(H), list_of_variables_spaced(T).
 
-variable(V) --> "?", alpha(A), alnum(B), { atom_chars(V, [A,B]) }.
+variable(V) --> "?", alpha(A), alpha(B), { atom_chars(V, [A,B]) }.
 
 alnum(C) --> char(alnum, C).
 numeric(C) --> char(numer, C).
