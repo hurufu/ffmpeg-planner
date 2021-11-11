@@ -1,8 +1,9 @@
 .SHELLFLAGS := $(.SHELLFLAGS) -o pipefail
+ACE_FILES := $(wildcard *.ace)
 
 .PHONY: run run-% clean
 
-run: run-test02
+run: $(addprefix run-,$(ACE_FILES:.ace=))
 
 run-%: %.arg
 	ffmpeg $(file < $<)
@@ -16,8 +17,8 @@ run-%: %.arg
 %.arg: ffmpeg.pdb %.scm
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
-%.pddl: ffmpeg-planner.pl pnf_handling.pdb %.ace
-	swipl -s $< -g "main('$*.ace'),halt" >$@
+%.pddl: ffmpeg-planner.pl fol.prolog %.ace
+	swipl -s $< -g "debug,main('$*.ace'),halt" >$@
 
 clean: F := $(wildcard *.scm *.arg *.txt)
 clean:
