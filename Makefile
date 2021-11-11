@@ -17,7 +17,7 @@ run-%: %.arg
 	swipl -s $< -g "pio('$*.scm'),halt" >$@
 
 %.pddl: ffmpeg-planner.pl fol.prolog %.ace
-	swipl -s $< -g "main('$*.ace'),halt" >$@
+	swipl -s $< -g "debug,main('$*.ace'),halt" >$@
 
 clean: F := $(wildcard *.scm *.arg *.txt)
 clean:
