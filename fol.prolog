@@ -30,29 +30,29 @@ pnf_pddl(AcePnf, ProblemDefinition) :-
 % Unifies FOL formula in S-expr format with equivalent one where all 'be'
 % predicates are replaced with '='
 compact(FolFormula, CompactFolFormula, ContainedProperNames) :-
-    must_not_exist(compa(_,_)),
+    must_not_exist(compact_formula(_,_)),
     sanitize(FolFormula, SanitizedFolFormula, ContainedProperNames),
-    findall(X, g(X), Xs),
+    findall(X, compactification_rule(X), Xs),
     setup_call_cleanup(
         maplist(assertz, Xs),
-        compa(SanitizedFolFormula, CompactFolFormula),
-        abolish(compa/2)
+        compact_formula(SanitizedFolFormula, CompactFolFormula),
+        abolish(compact_formula/2)
     ).
 
-g((
-    compa(U, U)
+compactification_rule((
+    compact_formula(U, U)
 )) :-
-    l(U).
+    logical_atom(U).
 
-g((
-    compa(-(A), n(AX)) :-
-        compa(A, AX)
+compactification_rule((
+    compact_formula(-(A), n(AX)) :-
+        compact_formula(A, AX)
 )).
 
-g((
-    compa(U, UX) :-
-        compa(A, AX),
-        compa(B, BX),
+compactification_rule((
+    compact_formula(U, UX) :-
+        compact_formula(A, AX),
+        compact_formula(B, BX),
         join(Class, AX, BX, X)
 )) :-
     univ_a(U, Op, [A,B]),
@@ -60,18 +60,18 @@ g((
     UX =.. [MappedOp,X],
     classify(MappedOp, Class, AX, BX).
 
-g((
-    compa(U, UX) :-
-        compa(B, BX)
+compactification_rule((
+    compact_formula(U, UX) :-
+        compact_formula(B, BX)
 )) :-
     quantifier(OpA, OpX),
     qx(OpX, BX),
     U =.. [OpA,A,B],
     UX =.. [OpX,[A],BX].
 
-g((
-    compa(U, UX) :-
-        compa(B, UY)
+compactification_rule((
+    compact_formula(U, UX) :-
+        compact_formula(B, UY)
 )) :-
     quantifier(OpA, OpX),
     U =.. [OpA,A,B],
@@ -86,9 +86,9 @@ join_aux(right, A, B, J) :- B =.. [_,G],              append([[A], G ], J).
 join_aux( none, A, B, J) :-                           append([[A],[B]], J).
 
 classify(P, Class, A, B) :-
-    i(U),
-    q(A),
-    q(B),
+    associative_connective(U),
+    allowed_element(A),
+    allowed_element(B),
     U =.. [P|_],
     A =.. [AF|_],
     B =.. [BF|_],
@@ -98,19 +98,19 @@ classify_aux(A,  left, A, X) :- X \= A.
 classify_aux(A, right, X, A) :- X \= A.
 classify_aux(A,  none, X, Y) :- X \= A, Y \= A.
 
-l(b(_,_)).
-l(p(_,_,_)).
-i(a(_)).
-i(o(_)).
-u(n(_)).
-q(X) :-
-    u(X);
-    i(X);
-    l(X).
+logical_atom(b(_,_)). % Noun
+logical_atom(p(_,_,_)). % Transitive verb
+associative_connective(a(_)). % Conjunction
+associative_connective(o(_)). % Disjunction
+negation(n(_)).
+allowed_element(X) :-
+    negation(X);
+    associative_connective(X);
+    logical_atom(X).
 qx(f, e(_,_)).
 qx(e, f(_,_)).
-qx(f, X) :- q(X).
-qx(_, X) :- q(X).
+qx(f, X) :- allowed_element(X).
+qx(_, X) :- allowed_element(X).
 
 map_op(&, a).
 map_op(v, o).
