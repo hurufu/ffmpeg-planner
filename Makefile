@@ -1,8 +1,9 @@
 .SHELLFLAGS := $(.SHELLFLAGS) -o pipefail
+ACE_FILES := $(wildcard *.ace)
 
 .PHONY: run run-% clean
 
-run: run-test02
+run: $(addprefix run-,$(ACE_FILES:.ace=))
 
 run-%: %.arg
 	ffmpeg $(file < $<)
