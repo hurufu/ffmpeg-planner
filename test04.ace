@@ -9,7 +9,7 @@ No n:video-stream is a n:audio-stream.
 No n:video-stream is encoded by an n:audio-codec.
 No n:audio-stream is encoded by a n:video-codec.
 
-p:f1 is an n:output-file which has a name which is "sample.mkv".
+p:f1 is an n:output-file which has a name which is "sample04.mkv".
 p:s11 is an n:audio-stream.
 p:f1 has p:s11.
 p:s11 is encoded by Libopus.
