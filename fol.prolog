@@ -121,9 +121,6 @@ quantifier(forall, f).
 univ_a(&(A,B), &, [A,B]).
 univ_a(v(A,B), v, [A,B]).
 
-must_succeed(Goal) :- call(Goal), !.
-must_succeed(Goal) :- throw(error(must_succeed,Goal)).
-
 % Sanitizes APE PNF formula and extracts all proper names from it.
 %
 % For a sanitized formula the following is true:
@@ -394,7 +391,14 @@ must_throw(Goal, Exception) :-
     catch(Goal, Exception, (X=1)),
     ground(X).
 
+must_succeed(Goal) :-
+    call(Goal) *-> true; throw_with_context(must_succeed(Goal)).
+
 must_not_exist(Predicate) :-
     must_throw(Predicate, error(existence_error(procedure,_),_)) ->
         true;
-        throw(error(should_not_exist(Predicate))).
+        throw_with_context(should_not_exist(Predicate)).
+
+throw_with_context(Formal) :-
+    get_prolog_backtrace(30, Location),
+        throw(error(Formal,context(Location, _))).
