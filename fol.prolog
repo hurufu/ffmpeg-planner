@@ -55,8 +55,7 @@ compactification_rule((
         compact_formula(B, BX),
         join(Class, AX, BX, X)
 )) :-
-    univ_a(U, Op, [A,B]),
-    map_op(Op, MappedOp),
+    univ_conv_associative_connective(U, MappedOp, [A,B]),
     UX =.. [MappedOp,X],
     classify(MappedOp, Class, AX, BX).
 
@@ -64,17 +63,15 @@ compactification_rule((
     compact_formula(U, UX) :-
         compact_formula(B, BX)
 )) :-
-    quantifier(OpA, OpX),
+    univ_conv_quantifier(U, OpX, [A,B]),
     qx(OpX, BX),
-    U =.. [OpA,A,B],
     UX =.. [OpX,[A],BX].
 
 compactification_rule((
     compact_formula(U, UX) :-
         compact_formula(B, UY)
 )) :-
-    quantifier(OpA, OpX),
-    U =.. [OpA,A,B],
+    univ_conv_quantifier(U, OpX, [A,B]),
     UX =.. [OpX,[A|BV],BX],
     UY =.. [OpX,BV,BX].
 
@@ -112,14 +109,10 @@ qx(e, f(_,_)).
 qx(f, X) :- allowed_element(X).
 qx(_, X) :- allowed_element(X).
 
-map_op(&, a).
-map_op(v, o).
-
-quantifier(exists, e).
-quantifier(forall, f).
-
-univ_a(&(A,B), &, [A,B]).
-univ_a(v(A,B), v, [A,B]).
+univ_conv_quantifier(exists(A,B), e, [A,B]).
+univ_conv_quantifier(forall(A,B), f, [A,B]).
+univ_conv_associative_connective(&(A,B), a, [A,B]).
+univ_conv_associative_connective(v(A,B), o, [A,B]).
 
 % Sanitizes APE PNF formula and extracts all proper names from it.
 %
