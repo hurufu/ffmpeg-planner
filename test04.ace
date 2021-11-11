@@ -2,6 +2,12 @@ Every n:video-stream is a stream.
 Every n:audio-stream is a stream.
 Every n:input-file is a file.
 Every n:output-file is a file.
+No file is a n:codec. No file is a stream. No file is a name.
+No stream is a n:codec. No stream is a file. No stream is a name.
+No n:audio-stream is a n:video-stream.
+No n:video-stream is a n:audio-stream.
+No n:video-stream is encoded by an n:audio-codec.
+No n:audio-stream is encoded by a n:video-codec.
 
 p:f1 is an n:output-file which has a name which is "sample.mkv".
 p:s11 is an n:audio-stream.
