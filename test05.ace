@@ -1,0 +1,24 @@
+Every n:video-stream is a stream.
+Every n:audio-stream is a stream.
+Every n:input-file is a file.
+Every n:output-file is a file.
+No file is a n:codec. No file is a stream. No file is a name.
+No stream is a n:codec. No stream is a file. No stream is a name.
+No n:audio-stream is a n:video-stream.
+No n:video-stream is a n:audio-stream.
+No n:video-stream is encoded by an n:audio-codec.
+No n:audio-stream is encoded by a n:video-codec.
+
+p:Libopus is an n:audio-codec.
+p:Aac is an n:audio-codec.
+p:Libx264 is a n:video-codec.
+p:Libx265 is a n:video-codec.
+Every n:audio-codec is a n:codec.
+Every n:video-codec is a n:codec.
+
+p:f1 is an n:output-file which has a name which is "sample05.mkv".
+p:s11 is an n:audio-stream.
+p:f1 has p:s11.
+p:s11 is encoded by Libopus.
+p:s10 is a n:video-stream which is encoded by Libx265.
+p:f1 has p:s10.
