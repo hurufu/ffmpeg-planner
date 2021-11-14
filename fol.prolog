@@ -122,14 +122,13 @@ univ_conv_associative_connective(v(A,B), o, [A,B]).
 %   * All references are tagged `i/1` and are set to be different from one another
 %   * 'be' is replaced with '='
 %   * An existence of a default world is added
+%   * All variables are assigned if possible
 %
+% TODO: Remove all '=' predicates after assignment
+% TODO: Remove all unbound variables from quantifiers
 % TODO: Check if it handles properly any FOL formula and not just PNF.
 % TODO: Handle verb 'be' better, more info in ACE specification.
 % FIXME: Accepts only single world from possible worlds semantics.
-% WARNING: This predicate isn't monotonic, because it is impossible to make it
-%          such. Input FOL doesn't destinguish between references and free
-%          variables that's why I have to assume that all free variables must
-%          be references.
 sanitize(FolFormula, SanitizedFolFormula, ProperNamesWithoutDuplicates) :-
     sanitize_aux(exists(World, FolFormula), World, SanitizedFolFormula, ProperNames, References),
     all_different(References),
