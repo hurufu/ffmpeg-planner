@@ -17,6 +17,7 @@ pnf_test(ProblemDefinition) :-
 
 pnf_pddl(AcePnf, ProblemDefinition) :-
     compact(AcePnf, Formula, ObjectList),
+   %format(user_error, "C: ~w~n", [Formula]),
     phrase(pddl(ObjectList,Formula), PddlChars),
    %phrase(objects(ObjectList), PddlChars),
    %phrase(goal(Formula), PddlChars),
@@ -32,6 +33,7 @@ pnf_pddl(AcePnf, ProblemDefinition) :-
 compact(FolFormula, CompactFolFormula, ContainedProperNames) :-
     must_not_exist(compact_formula(_,_)),
     sanitize(FolFormula, SanitizedFolFormula, ContainedProperNames),
+   %format(user_error, "S: ~w~n", [SanitizedFolFormula]),
     findall(X, compactification_rule(X), Xs),
     setup_call_cleanup(
         maplist(assertz, Xs),
