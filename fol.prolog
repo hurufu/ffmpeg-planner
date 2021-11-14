@@ -244,7 +244,7 @@ sequence_of_objects_spaced([O|T]) --> identifier(O), sequence_of_objects_spaced(
 
 goal(G) --> "(:goal ", ex(G), ")".
 
-ex(b(O,A)) --> { atom_chars(O,OC) }, "(", OC, identifier(A), ")".
+ex(b(O,A)) --> { atom_chars(O, OC) }, "(", OC, identifier(A), ")".
 ex(p(P,A,B)) --> { atom_chars(P, PC) }, "(", PC, identifier(A), identifier(B), ")".
 ex(n(X)) --> "(not ", ex(X), ")".
 ex(e(H, X)) --> "(exists", list_of_variables(H), " ", ex(X), ")".
@@ -373,8 +373,8 @@ ut_fol_sanity_checks_are_passing :-
 ut_tag_sanity_checks_are_passing :-
     tag(A, i(A), []),
     tag(named(b), n(b), [n(b)]),
-    must_throw(tag(named(C),_,_), type_error(ground|var,named(C))),
-    must_throw(tag(bad(t),_,_), domain_error(named|string,bad(t))).
+    must_throw(tag(named(C),_,_), error(type_error(ground|var,named(C)),_)),
+    must_throw(tag(bad(t),_,_), error(domain_error(named|string,bad(t)),_)).
 
 all_tests_are_passing :-
     %ut_fol_sanity_checks_are_passing,
@@ -395,4 +395,4 @@ must_not_exist(Predicate) :-
 
 throw_with_context(Formal) :-
     get_prolog_backtrace(30, Location),
-        throw(error(Formal,context(Location, _))).
+    throw(error(Formal,context(Location, _))).
