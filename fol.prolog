@@ -125,7 +125,6 @@ univ_conv_associative_connective(v(A,B), o, [A,B]).
 %   * All variables are assigned if possible
 %
 % TODO: Remove all '=' predicates after assignment
-% TODO: Remove all unbound variables from quantifiers
 % TODO: Check if it handles properly any FOL formula and not just PNF.
 % TODO: Handle verb 'be' better, more info in ACE specification.
 % FIXME: Accepts only single world from possible worlds semantics.
@@ -140,6 +139,13 @@ sanitize_aux(Q, W, QX, O, R) :-
     must_be_variable(A),
     sanitize_aux(B, W, BX, O, BR),
     (
+        (
+            var(A) ->
+            (
+                QX = BX,
+                BR = R
+            )
+        );
         (
             A = i(_),
             univ_quantifier(QX, Op, [A,BX]),
