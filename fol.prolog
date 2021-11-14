@@ -138,10 +138,19 @@ sanitize_aux(A, W, X, O, []) :-
     compact_edge(A, W, X, O).
 sanitize_aux(Q, W, QX, O, R) :-
     univ_quantifier(Q, Op, [A,B]),
-    univ_quantifier(QX, Op, [i(A),BX]),
     must_be_variable(A),
     sanitize_aux(B, W, BX, O, BR),
-    append([[i(A)],BR], R).
+    (
+        (
+            A = i(_),
+            univ_quantifier(QX, Op, [A,BX]),
+            append([[A],BR], R)
+        );
+        (
+            QX = BX,
+            BR = R
+        )
+    ).
 sanitize_aux(Q, W, QX, O, R) :-
     univ_binary_operator(Q, Op, [A,B]),
     univ_binary_operator(QX, Op, [AX,BX]),
@@ -163,6 +172,10 @@ compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
     SimplifiedEdgeTerm = b(Noun, TaggedRef),
     tag(Ref, TaggedRef, ContainedProperNames).
 compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
+    EdgeTerm = predicate(World, _, 'be', Ref, Ref)-_Index,
+    SimplifiedEdgeTerm = p('=', TaggedRef, TaggedRef),
+    tag(Ref, TaggedRef, ContainedProperNames).
+compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
     EdgeTerm = predicate(World, _Ref, Verb, SubjRef, ObjRef)-_Index,
     SimplifiedEdgeTerm = p(MappedVerb, TaggedSubjRef, TaggedObjRef),
     verb_mapping(Verb, MappedVerb),
@@ -174,7 +187,6 @@ compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
 % conviniently mapped to equality in PDDL.
 % FIXME: Actually in ACE this verb is far more overloaded, so only this simple
 %        use is supported.
-verb_mapping(be, =).
 verb_mapping(V, V) :- dif(V, be), dif(V, =).
 
 % Validates edge terms and assigns tags to free variables
@@ -182,24 +194,13 @@ verb_mapping(V, V) :- dif(V, be), dif(V, =).
 % -- There isn't because there is no destinction between References and free
 %    variables in the PNF output
 tag(A, X, O) :-
-(
-    ground(A) ->
-    (
-        tag_term(A, X, O) ->
-            true;
-            throw(domain_error(named|string, A))
-    );
-    (
-        var(A) ->
-            tag_variable(A, X, O);
-            throw(type_error(ground|var, A))
-    )
-).
-tag_variable(A, i(A), []).
+    tag_variable(A,X,O);
+    tag_term(A,X,O).
+tag_variable(A, A, []) :- A = i(_).
 tag_term(named(A), n(A), [n(A)]).
 tag_term(string(A), s(A), [s(A)]).
 
-must_be_variable(A) :- nonvar(A) -> throw(type_error(var,A)); true.
+must_be_variable(A) :- var(A) -> true; throw_with_context(type_error(var,A)).
 
 all_different([]).
 all_different([H|T]) :-
