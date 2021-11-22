@@ -223,10 +223,9 @@ pddl(O,G) --> "(define (problem test)", n,
 n --> "\n".
 objects(V) --> "(:objects", sequence_of_objects_spaced(V), predefined_objects, ")".
 
-predefined_objects --> " f0 sample_mp4 s00 s01".
+predefined_objects --> " f0 sample_mp4 s00 s01 a b c d e f g h i j k".
 predefined_init --> "(input-file f0)", n,
      "               (name sample_mp4)", n,
-     "               (taken sample_mp4)", n,
      "               (have f0 sample_mp4)", n,
      "               (stream s00)", n,
      "               (audio-stream s00)", n,

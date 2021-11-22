@@ -8,18 +8,18 @@
 ffmpeg_plan(Plan) --> "-loglevel warning ", steps(Plan).
 steps([]) --> "".
 steps([H|T]) --> step(H), steps(T).
-step(open_file(_, FileNameAtom)) -->
+step(open_file(FileNameAtom,_InFile)) -->
     {
         filename_adjusted(FileNameAtom, AdjustedFileNameChars)
     },
     ws, "-i", ws, AdjustedFileNameChars.
-step(map_audio_stream(FromFile,FromStream,_ToFile,_ToStream)) -->
+step(map_audio_stream(FromFile,FromStream,_ToStream)) -->
     {
         atom_chars(FromFile, FromFileChars),
         atom_chars(FromStream, FromStreamChars)
     },
     ws, "-map", ws, FromFileChars, ":", FromStreamChars.
-step(map_video_stream(FromFile,FromStream,_ToFile,_ToStream)) -->
+step(map_video_stream(FromFile,FromStream,_ToStream)) -->
     {
         atom_chars(FromFile, FromFileChars),
         atom_chars(FromStream, FromStreamChars)
@@ -35,11 +35,12 @@ step(set_audio_encoder(_, CodecAtom)) -->
         atom_chars(CodecAtom, CodecChars)
     },
     ws, "-c:a", ws, CodecChars.
-step(write_file(_, FileNameAtom)) -->
+step(write_file(FileNameAtom,_OutFile)) -->
     {
         filename_adjusted(FileNameAtom, AdjustedFileNameChars), !
     },
     ws, AdjustedFileNameChars.
+step('reach-goal') --> "".
 
 ws --> " ".
 

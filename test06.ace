@@ -1,25 +1,32 @@
-Every n:video-stream is a stream.
-Every n:audio-stream is a stream.
-Every n:input-file is a file.
-Every n:output-file is a file.
-No file is a n:codec. No file is a stream. No file is a name.
-No stream is a n:codec. No stream is a file. No stream is a name.
-No n:audio-stream is a n:video-stream.
-No n:video-stream is a n:audio-stream.
-No n:video-stream is encoded by an n:audio-codec.
-No n:audio-stream is encoded by a n:video-codec.
-
 p:Libopus is an n:audio-codec.
 p:Aac is an n:audio-codec.
 p:Libx264 is a n:video-codec.
 p:Libx265 is a n:video-codec.
+
+Every n:video-stream is a stream.
+Every n:audio-stream is a stream.
+Every n:input-file is a file.
+Every n:output-file is a file.
 Every n:audio-codec is a n:codec.
 Every n:video-codec is a n:codec.
 
-p:f1 is an n:output-file which has a name which is "sample06.ogg".
-p:s10 is an n:audio-stream which is encoded by Libopus.
-p:f1 has p:s10.
+                       No file is a stream.     No file is a name.     No file is a n:codec.
+No stream is a file.                            No stream is a name.   No stream is a n:codec.
+No name is a file.     No name is a stream.                            No name is a n:codec.
+No n:codec is a file.  No n:codec is a stream.  No n:codec is a name.
 
-p:f2 is an n:output-file which has a name which is "sample06.webm".
-p:s20 is a n:video-stream which is encoded by Libx265.
-p:f2 has p:s20.
+No n:input-file is an n:output-file.
+No n:output-file is an n:input-file.
+No n:audio-stream is a n:video-stream.
+No n:video-stream is a n:audio-stream.
+
+No n:video-stream is encoded by an n:audio-codec.
+No n:audio-stream is encoded by a n:video-codec.
+
+###
+
+An n:output-file has a name which is "sample06.ogg".
+The n:output-file has an n:audio-stream which is encoded by Libopus.
+
+#An n:output-file has a name which is "sample06.webm".
+#The n:output-file has a n:video-stream which is encoded by Libx265.
