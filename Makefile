@@ -20,6 +20,6 @@ run-%: %.arg
 %.pddl: ffmpeg-planner.pl fol.prolog %.ace
 	swipl -s $< -g "debug,main('$*.ace'),halt" >$@
 
-clean: F := $(wildcard *.scm *.arg *.txt)
+clean: F := $(wildcard *.scm *.arg *.txt $(ACE_FILES:.ace=.pddl))
 clean:
 	$(if $(strip $F),rm -- $F,)
