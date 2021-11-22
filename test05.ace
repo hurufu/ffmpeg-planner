@@ -16,9 +16,17 @@ p:Libx265 is a n:video-codec.
 Every n:audio-codec is a n:codec.
 Every n:video-codec is a n:codec.
 
+
+#"sample05.mkv" is a name of an n:output-file.
+#The n:output-file's n:video-stream is encoded by p:Libx265.
+#The n:video-stream's quality is 420 p.
+
+#The file has an n:audio-stream which is encoded by p:Liboups.
+
 p:f1 is an n:output-file which has a name which is "sample05.mkv".
 p:s11 is an n:audio-stream.
 p:f1 has p:s11.
 p:s11 is encoded by Libopus.
 p:s10 is a n:video-stream which is encoded by Libx265.
 p:f1 has p:s10.
+p:s10 has a quality which is p:Edtv. # 480p
