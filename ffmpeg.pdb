@@ -13,8 +13,18 @@ step(open_file(_, FileNameAtom)) -->
         filename_adjusted(FileNameAtom, AdjustedFileNameChars)
     },
     ws, "-i", ws, AdjustedFileNameChars.
-step(map_audio_stream(_,_,_,_)) --> "".
-step(map_video_stream(_,_,_,_)) --> "".
+step(map_audio_stream(FromFile,FromStream,_ToFile,_ToStream)) -->
+    {
+        atom_chars(FromFile, FromFileChars),
+        atom_chars(FromStream, FromStreamChars)
+    },
+    ws, "-map", ws, FromFileChars, ":", FromStreamChars.
+step(map_video_stream(FromFile,FromStream,_ToFile,_ToStream)) -->
+    {
+        atom_chars(FromFile, FromFileChars),
+        atom_chars(FromStream, FromStreamChars)
+    },
+    ws, "-map", ws, FromFileChars, ":", FromStreamChars.
 step(set_video_encoder(_, CodecAtom)) -->
     {
         atom_chars(CodecAtom, CodecChars)
