@@ -241,6 +241,7 @@ timeless -->
      "               (codec Libx265)", n,
      "               (codec Aac)", n,
      "               (codec Libopus)", n,
+     "               (codec Copy)", n,
      "               (video-codec Libx264)", n,
      "               (video-codec Libx265)", n,
      "               (audio-codec Aac)", n,
