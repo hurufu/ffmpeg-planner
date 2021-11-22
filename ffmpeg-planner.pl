@@ -4,7 +4,7 @@
 
 main(InFileName) :-
     read_file_to_codes(InFileName, Codes, []),
-    generate_output(Codes, stable_strong, [maxanswers=10], _, _, _, OutAnswerText, [OutPnf]),
+    generate_output(Codes, court, [maxanswers=100], _, _, _, OutAnswerText, [OutPnf]),
     format(user_error, "~w~n", [OutAnswerText]),
     pnf_pddl(OutPnf, ProblemDefinition),
     format("~s~n", ProblemDefinition).
