@@ -189,6 +189,10 @@ compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
     tag(SubjRef, TaggedSubjRef, O1),
     tag(ObjRef, TaggedObjRef, O2),
     append([O1,O2], ContainedProperNames).
+compact_edge(EdgeTerm, World, p(=, n(a), n(a)), []) :-
+    EdgeTerm = relation(World, _, of, _)-_Index.
+compact_edge(EdgeTerm, World, p(=, n(a), n(a)), []) :-
+    EdgeTerm = property(World,_,_,_)-_Index.
 
 % Verb 'be' is somewhat special in ACE - it has predefined meaning which can be
 % conviniently mapped to equality in PDDL.
