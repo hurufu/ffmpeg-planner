@@ -1,32 +1,32 @@
-p:Libopus is an n:audio-codec.
-p:Aac is an n:audio-codec.
-p:Libx264 is a n:video-codec.
-p:Libx265 is a n:video-codec.
+Libopus is an audio-codec.
+Aac is an audio-codec.
+Libx264 is a video-codec.
+Libx265 is a video-codec.
 
-Every n:video-stream is a stream.
-Every n:audio-stream is a stream.
-Every n:input-file is a file.
-Every n:output-file is a file.
-Every n:audio-codec is a n:codec.
-Every n:video-codec is a n:codec.
+Every video-stream is a stream.
+Every audio-stream is a stream.
+Every input-file is a file.
+Every output-file is a file.
+Every audio-codec is a codec.
+Every video-codec is a codec.
 
-                       No file is a stream.     No file is a name.     No file is a n:codec.
-No stream is a file.                            No stream is a name.   No stream is a n:codec.
-No name is a file.     No name is a stream.                            No name is a n:codec.
-No n:codec is a file.  No n:codec is a stream.  No n:codec is a name.
+                      No file is a stream.   No file is a name.    No file is a codec.
+No stream is a file.                         No stream is a name.  No stream is a codec.
+No name is a file.    No name is a stream.                         No name is a codec.
+No codec is a file.   No codec is a stream.  No codec is a name.
 
-No n:input-file is an n:output-file.
-No n:output-file is an n:input-file.
-No n:audio-stream is a n:video-stream.
-No n:video-stream is a n:audio-stream.
+No input-file is an output-file.
+No output-file is an input-file.
+No audio-stream is a video-stream.
+No video-stream is a audio-stream.
 
-No n:video-stream is encoded by an n:audio-codec.
-No n:audio-stream is encoded by a n:video-codec.
+No video-stream is encoded by an audio-codec.
+No audio-stream is encoded by a video-codec.
 
 ###
 
-An n:output-file has a name which is "sample06.ogg".
-The n:output-file has an n:audio-stream which is encoded by Libopus.
+An output-file has a name which is "sample06.ogg".
+The output-file has an audio-stream which is encoded by Libopus.
 
-#An n:output-file has a name which is "sample06.webm".
-#The n:output-file has a n:video-stream which is encoded by Libx265.
+#An output-file has a name which is "sample06.webm".
+#The output-file has a video-stream which is encoded by Libx265.
