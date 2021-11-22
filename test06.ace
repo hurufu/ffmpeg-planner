@@ -2,6 +2,7 @@ Libopus is an audio-codec.
 Aac is an audio-codec.
 Libx264 is a video-codec.
 Libx265 is a video-codec.
+Copy is a codec.
 
 Every video-stream is a stream.
 Every audio-stream is a stream.
@@ -23,6 +24,9 @@ No video-stream is a audio-stream.
 No video-stream is encoded by an audio-codec.
 No audio-stream is encoded by a video-codec.
 
+Every copied stream is encoded by Copy.
+Every file has the file's name.
+
 ###
 
 An output-file has a name which is "sample06.ogg".
@@ -30,3 +34,7 @@ The output-file has an audio-stream which is encoded by Libopus.
 
 #An output-file has a name which is "sample06.webm".
 #The output-file has a video-stream which is encoded by Libx265.
+
+#An output-file's name is "sample06.mkv".
+#The output-file has a copied audio-stream.
+#The output-file has a a:low-quality video-stream which is encoded by Libx264.
