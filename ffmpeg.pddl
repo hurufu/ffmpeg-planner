@@ -19,6 +19,7 @@
             (opened-file ?f)
             (written-file ?f)
             (written ?f)
+            (used-name ?n)
             (pending-stream ?s))
 
         (:action OPEN_FILE
@@ -26,7 +27,7 @@
             :precondition (and (input-file ?if)
                                (name ?in)
                                (have ?if ?in))
-            :effect (opened-file ?if))
+            :effect (and (opened-file ?if) (used-name ?in)))
 
         (:action MARK_STREAM
             :parameters (?s)
@@ -81,6 +82,7 @@
             :parameters (?on ?of)
             :precondition (and (name ?on) (output-file ?of)
                                (exists (?if) (opened-file ?if))
+                               (not (used-name ?on))
                                (not (written-file ?of)))
             :effect (and (have ?of ?on)
                          (written-file ?of)
