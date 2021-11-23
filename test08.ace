@@ -1,0 +1,9 @@
+An output-file has a name which is "sample08.ogg".
+The output-file has an audio-stream which is encoded by Libopus.
+
+#An output-file has a name which is "sample08.webm".
+#The output-file has a video-stream which is encoded by Libx265.
+
+#An output-file's name is "sample08.mkv".
+#The output-file has a copied audio-stream.
+#The output-file has a a:low-quality video-stream which is encoded by Libx264.
