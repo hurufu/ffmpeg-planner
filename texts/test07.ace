@@ -14,18 +14,18 @@ No audio-stream is encoded by a video-codec.
 If there is a stream of a file then the file has the stream.
 If a stream is copied to a file then the stream is copied.
 
-p:Copy is a codec.
-p:Libopus is an audio-codec.
-p:Aac is an audio-codec.
-p:Libx264 is a video-codec.
-p:Libx265 is a video-codec.
+Copy is a codec.
+Libopus is an audio-codec.
+Aac is an audio-codec.
+Libx264 is a video-codec.
+Libx265 is a video-codec.
 Every audio-codec is a codec.
 Every video-codec is a codec.
 
 #p:f0 is an input-file. p:f01's name is "sample.mp4".
-#p:s00 is p:f0's video-stream which is encoded by p:Libx264.
-#p:s01 is p:f0's audio-stream which is encoded by p:Aac.
-#p:s02 is p:f0's audio-stream which is encoded by p:Aac.
+#p:s00 is p:f0's video-stream which is encoded by Libx264.
+#p:s01 is p:f0's audio-stream which is encoded by Aac.
+#p:s02 is p:f0's audio-stream which is encoded by Aac.
 
 #"sample06.ogg" is a name of an output-file.
 #Its audio-stream is encoded by p:Libopus.
