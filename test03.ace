@@ -1,11 +1,11 @@
-Every n:video-stream is a stream.
-Every n:audio-stream is a stream.
-Every n:input-file is a file.
-Every n:output-file is a file.
+Every video-stream is a stream.
+Every audio-stream is a stream.
+Every input-file is a file.
+Every output-file is a file.
 
-p:f1 is an n:output-file which has a name which is "sample03.mkv".
-p:s11 is an n:audio-stream.
+p:f1 is an output-file which has a name which is "sample03.mkv".
+p:s11 is an audio-stream.
 p:f1 has p:s11.
 p:s11 is encoded by Libopus.
-p:s10 is a n:video-stream which is encoded by Libx265.
+p:s10 is a video-stream which is encoded by Libx265.
 p:f1 has p:s10.
