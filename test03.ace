@@ -9,3 +9,7 @@ p:f1 has p:s11.
 p:s11 is encoded by Libopus.
 p:s10 is a video-stream which is encoded by Libx265.
 p:f1 has p:s10.
+
+p:f2 is an output-file which has a name which is "sample03.ogg".
+p:s20 is an audio-stream which is encoded by Aac.
+p:f2 has p:s20.
