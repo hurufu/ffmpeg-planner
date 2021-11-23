@@ -59,13 +59,13 @@
             :parameters (?if ?is ?os)
             :precondition (and (opened-file ?if) (audio-stream ?is) (audio-stream ?os)
                                (have ?if ?is)
-                               (not (have ?if ?os)))
+                               (not (or (have ?if ?os) (pending-stream ?os))))
             :effect (pending-stream ?os))
         (:action MAP_VIDEO_STREAM
             :parameters (?if ?is ?os)
             :precondition (and (opened-file ?if) (video-stream ?is) (video-stream ?os)
                                (have ?if ?is)
-                               (not (have ?if ?os)))
+                               (not (or (have ?if ?os) (pending-stream ?os))))
             :effect (pending-stream ?os))
 
         (:action SET_AUDIO_ENCODER
