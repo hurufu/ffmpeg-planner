@@ -189,6 +189,10 @@ compact_edge(EdgeTerm, World, SimplifiedEdgeTerm, ContainedProperNames) :-
     tag(SubjRef, TaggedSubjRef, O1),
     tag(ObjRef, TaggedObjRef, O2),
     append([O1,O2], ContainedProperNames).
+compact_edge(EdgeTerm, World, p(=, n(a), n(a)), []) :-
+    EdgeTerm = relation(World, _, of, _)-_Index.
+compact_edge(EdgeTerm, World, p(=, n(a), n(a)), []) :-
+    EdgeTerm = property(World,_,_,_)-_Index.
 
 % Verb 'be' is somewhat special in ACE - it has predefined meaning which can be
 % conviniently mapped to equality in PDDL.
@@ -223,10 +227,9 @@ pddl(O,G) --> "(define (problem test)", n,
 n --> "\n".
 objects(V) --> "(:objects", sequence_of_objects_spaced(V), predefined_objects, ")".
 
-predefined_objects --> " f0 sample_mp4 s00 s01".
+predefined_objects --> " Copy f0 sample_mp4 s00 s01 a b c d e f g h i j k".
 predefined_init --> "(input-file f0)", n,
      "               (name sample_mp4)", n,
-     "               (taken sample_mp4)", n,
      "               (have f0 sample_mp4)", n,
      "               (stream s00)", n,
      "               (audio-stream s00)", n,
@@ -242,6 +245,7 @@ timeless -->
      "               (codec Libx265)", n,
      "               (codec Aac)", n,
      "               (codec Libopus)", n,
+     "               (codec Copy)", n,
      "               (video-codec Libx264)", n,
      "               (video-codec Libx265)", n,
      "               (audio-codec Aac)", n,

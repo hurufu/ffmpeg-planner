@@ -1,38 +1,38 @@
-Every n:video-stream is a stream.
-Every n:audio-stream is a stream.
-Every n:input-file is a file.
-Every n:output-file is a file.
-No file is a n:codec. No file is a stream. No file is a name.
-No stream is a n:codec. No stream is a file. No stream is a name.
-No name is a n:codec. No name is a file. No name is a stream.
+Every video-stream is a stream.
+Every audio-stream is a stream.
+Every input-file is a file.
+Every output-file is a file.
+No file is a codec. No file is a stream. No file is a name.
+No stream is a codec. No stream is a file. No stream is a name.
+No name is a codec. No name is a file. No name is a stream.
 
-No n:audio-stream is a n:video-stream.
-No n:video-stream is a n:audio-stream.
-No n:video-stream is encoded by an n:audio-codec.
-No n:audio-stream is encoded by a n:video-codec.
+No audio-stream is a video-stream.
+No video-stream is a audio-stream.
+No video-stream is encoded by an audio-codec.
+No audio-stream is encoded by a video-codec.
 
 If there is a stream of a file then the file has the stream.
 If a stream is copied to a file then the stream is copied.
 
-p:Copy is a n:codec.
-p:Libopus is an n:audio-codec.
-p:Aac is an n:audio-codec.
-p:Libx264 is a n:video-codec.
-p:Libx265 is a n:video-codec.
-Every n:audio-codec is a n:codec.
-Every n:video-codec is a n:codec.
+p:Copy is a codec.
+p:Libopus is an audio-codec.
+p:Aac is an audio-codec.
+p:Libx264 is a video-codec.
+p:Libx265 is a video-codec.
+Every audio-codec is a codec.
+Every video-codec is a codec.
 
-p:f0 is an n:input-file. p:f01's name is "sample.mp4".
-p:s00 is p:f0's n:video-stream which is encoded by p:Libx264.
-p:s01 is p:f0's n:audio-stream which is encoded by p:Aac.
-p:s02 is p:f0's n:audio-stream which is encoded by p:Aac.
+#p:f0 is an input-file. p:f01's name is "sample.mp4".
+#p:s00 is p:f0's video-stream which is encoded by p:Libx264.
+#p:s01 is p:f0's audio-stream which is encoded by p:Aac.
+#p:s02 is p:f0's audio-stream which is encoded by p:Aac.
 
-"sample06.ogg" is a name of an n:output-file.
-Its n:audio-stream is encoded by p:Libopus.
-An n:audio-stream of the n:output-file is copied from p:s01.
+#"sample06.ogg" is a name of an output-file.
+#Its audio-stream is encoded by p:Libopus.
+#An audio-stream of the output-file is copied from p:s01.
 
-"sample06.webm" is a name of an n:output-file.
-Its n:video-stream is encoded by Libx265.
+#"sample06.webm" is a name of an output-file.
+#Its video-stream is encoded by Libx265.
 
-"sample06.mkv" is a name of an n:output-file.
-Every n:audio-stream of p:f0 is copied to the n:output-file.
+#"sample06.mkv" is a name of an output-file.
+#Every audio-stream of p:f0 is copied to the output-file.
