@@ -17,6 +17,7 @@
             (encode ?c ?s)
 
             (opened-file ?f)
+            (written-file ?f)
             (written ?f)
             (pending-stream ?s))
 
@@ -78,8 +79,11 @@
 
         (:action WRITE_FILE
             :parameters (?on ?of)
-            :precondition (and (name ?on) (output-file ?of) (exists (?if) (opened-file ?if)))
+            :precondition (and (name ?on) (output-file ?of)
+                               (exists (?if) (opened-file ?if))
+                               (not (written-file ?of)))
             :effect (and (have ?of ?on)
+                         (written-file ?of)
                          (forall (?s)
                                  (when (pending-stream ?s)
                                        (and (have ?of ?s)
