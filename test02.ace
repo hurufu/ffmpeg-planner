@@ -1,6 +1,6 @@
-p:f1 is an n:output-file which has a name which is "sample02.mkv".
-p:s11 is an n:audio-stream.
+p:f1 is an output-file which has a name which is "sample02.mkv".
+p:s11 is an audio-stream.
 p:f1 has p:s11.
 p:s11 is encoded by Libopus.
-p:s10 is a n:video-stream which is encoded by Libx265.
+p:s10 is a video-stream which is encoded by Libx265.
 p:f1 has p:s10.
