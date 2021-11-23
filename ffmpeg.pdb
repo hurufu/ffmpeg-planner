@@ -15,16 +15,16 @@ step(open_file(FileNameAtom,_InFile)) -->
     ws, "-i", ws, AdjustedFileNameChars.
 step(map_audio_stream(FromFile,FromStream,_ToStream)) -->
     {
-        atom_chars(FromFile, FromFileChars),
-        atom_chars(FromStream, FromStreamChars)
+        atom_chars(FromFile, [f,FromFileChar]),
+        atom_chars(FromStream, [s,FromFileChar,FromStreamChar])
     },
-    ws, "-map", ws, FromFileChars, ":", FromStreamChars.
+    ws, "-map", ws, [FromFileChar], ":", [FromStreamChar].
 step(map_video_stream(FromFile,FromStream,_ToStream)) -->
     {
-        atom_chars(FromFile, FromFileChars),
-        atom_chars(FromStream, FromStreamChars)
+        atom_chars(FromFile, [f,FromFileChar]),
+        atom_chars(FromStream, [s,FromFileChar,FromStreamChar])
     },
-    ws, "-map", ws, FromFileChars, ":", FromStreamChars.
+    ws, "-map", ws, [FromFileChar], ":", [FromStreamChar].
 step(set_video_encoder(_, CodecAtom)) -->
     {
         atom_chars(CodecAtom, CodecChars)
@@ -41,6 +41,12 @@ step(write_file(FileNameAtom,_OutFile)) -->
     },
     ws, AdjustedFileNameChars.
 step('reach-goal') --> "".
+step(mark_stream(_)) --> "".
+step(mark_audio_stream(_)) --> "".
+step(mark_video_stream(_)) --> "".
+step(mark_name(_)) --> "".
+step(mark_file(_)) --> "".
+step(mark_output_file(_)) --> "".
 
 ws --> " ".
 
