@@ -3,7 +3,7 @@ p:a is an audio-stream which is encoded by Libopus.
 p:f1 has p:a.
 p:f1 doesn't have a video-stream.
 
-#p:f2 is an output-file which has a name which is "sample09.mkv".
-#p:v is an video-stream which is encoded by Libx264.
-#p:f2 has p:v.
-#p:f2 doesn't have an audio-stream.
+p:f2 is an output-file which has a name which is "sample09.mkv".
+p:v is an video-stream which is encoded by Libx264.
+p:f2 has p:v.
+p:f2 doesn't have an audio-stream.
