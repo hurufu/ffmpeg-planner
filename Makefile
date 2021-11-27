@@ -3,6 +3,7 @@
 ACE_DIR     := texts
 ACE_FILES   := $(wildcard $(ACE_DIR)/*.ace)
 RUN_TARGETS := $(addprefix run-,$(patsubst $(ACE_DIR)/%.ace,%,$(ACE_FILES)))
+FF          ?= ff
 
 vpath %.ace $(ACE_DIR)
 .PHONY: run run-% clean
@@ -13,7 +14,7 @@ run-%: %.arg
 	ffmpeg $(file < $<)
 
 %.txt: ffmpeg.pddl %.pddl
-	ff -o $< -f $*.pddl | tee $@
+	$(FF) -o $< -f $*.pddl | tee $@
 
 %.scm: %.txt
 	sed -rne 's/[step 0-9]{9}: (.*)/(\1)/p' <$< | tr '[:upper:]' '[:lower:]' >$@
